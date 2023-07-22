@@ -1,0 +1,25 @@
+{
+    "name": "yukanoe/html-test",
+    "version": "1.0.0",
+    "description": "A PHP library , Minimal and portable DOM.",
+    "keywords": ["yukanoe","html","xhtml","dom"],
+    "homepage": "https://github.com/yukanoe/html",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kirishimayuu",
+            "email": "kirishimayuu@yukanoe.org",
+            "homepage": "https://yukanoe.org/html"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url":  "../../*"
+        }
+    ],
+    "require": {
+        "yukanoe/html" : "*"
+    }
+}
