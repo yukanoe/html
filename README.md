@@ -5,17 +5,21 @@ A PHP library , Simple, minimal and portable DOM.
 **Try**
 [demo-01.yukanoe.org](https://github.com/yukanoe/demo-01.yukanoe.org)
 
+**Installation**
+```bash
+composer require yukanoe/html
+```
+
 ## Table of Contents
 - [Overview](#overview)
 - [Quick setup guide](#quick-setup-using-composer-recommended)
 - [Basic Usage](#basic-usage)
 - [Yukanoe Tag Manager](#yukanoe-tag-manager)
 - [Test/Demo](./tests)
-- Details :
-  + [Tag](./docs/CLASS-TAG.md)
-  + [TagManager](./docs/CLASS-TAG-MANAGER.md)
-  + [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
-
+- [Examples](./examples)
+- [Class Tag](./docs/CLASS-TAG.md)
+- [Class TagManager](./docs/CLASS-TAG-MANAGER.md)
+- [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
 
 ...
 
@@ -116,7 +120,7 @@ $body->addChild($div);
 $div->addChild([$h1, $p]);
 ```
 
-## OUTPUT (browser)
+### OUTPUT (browser)
 ```html
 <!DOCTYPE html>
 <html>
@@ -169,20 +173,45 @@ $html->addChild($head, $body);
 ```
 
 ### Loops
+**/examples/example-00.php**
 ```php
 $messages = [
-    "admin" => "bar",
-    "user" => "foo",
-    "admin" => "barbar",
-    "user" => "foofoo",
+    ["name" => "admin", "text" => "bar"],
+    ["name" => "user1", "text" => "foo"],
+    ["name" => "admin", "text" => "barbarbar"],
+    ["name" => "user1", "text" => "foofoofoo"]
 ];
-$center = new Tag('div');
-foreach ( $messages as $user => $msg) {
-  $center->addChild(new Tag('p', [], "{$user}: {$msg} "));
+$body->addChild($center = new Tag('div'));
+foreach ( $messages as $msg ) {
+  $center->addChild(new Tag('p', [], "{$msg['name']}: {$msg['text']} "));
+}
+```
+
+### Clone  ( DEFAULT: deep clone )
+**/examples/example-00.php**
+```php
+$messages = [
+    ["name" => "admin", "text" => "bar"],
+    ["name" => "user1", "text" => "foo"],
+    ["name" => "admin", "text" => "barbarbar"],
+    ["name" => "user1", "text" => "foofoofoo"]
+];
+$body->addChild($center = new Tag('div'));
+$msgDiv  = new Tag('div',  ['class'=>'message'], '');
+$msgDiv->addChild([
+    new Tag('span', ['style'=>' font-weight: bold; '], ''),
+    new Tag('span', [], '')
+]);
+foreach ( $messages as $msg) {
+    $newDivMsg = clone $msgDiv;
+    $newDivMsg->child[0]->text = $msg['name'];
+    $newDivMsg->child[1]->text = $msg['text'];
+    $center->addChild($newDivMsg);
 }
 ```
 
 ### Conditional Statements
+**/examples/example-00.php**
 ```php
 $user ??= '';
 if($user == 'admin'){
@@ -191,27 +220,6 @@ if($user == 'admin'){
 }
 ```
 
-### Clone  ( DEFAULT: deep clone )
-```php
-$messages = [
-    "admin" => "bar",
-    "user" => "foo",
-    "admin" => "barbar",
-    "user" => "foofoo",
-];
-$center  = new Tag('div');
-$msgDiv  = new Tag('div',  ['class'=>'message'], '');
-$msgDiv->addChild([
-  new Tag('span', ['class'=>'user'], ''),
-  new Tag('span', ['class'=>'text'], '')
-]);
-foreach ( $messages as $user => $msg) {
-  $newDivMsg = clone $msgDiv;
-  $newDivMsg->child[0]->text = $user;
-  $newDivMsg->child[1]->text = $msg;
-  $center->addChild($newDivMsg);
-}
-```
 
 
 ## Yukanoe Tag Manager
