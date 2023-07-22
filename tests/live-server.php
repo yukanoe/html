@@ -18,6 +18,9 @@ if(!is_file($realFilePath))
 
 $mime = mime_content_type($realFilePath);
 
+if($ext == 'css')
+	$mime = 'text/css';
+
 // Header
 if($mime)
 	header("Content-type: {$mime}");
