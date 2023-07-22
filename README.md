@@ -7,7 +7,7 @@ A PHP library , Simple, minimal and portable DOM.
 
 ## Table of Contents
 - [Overview](#overview)
-- [Quick setup guide](#quick-setup-guide)
+- [Quick setup guide](#quick-setup-using-composer-recommended)
 - [Basic Usage](#basic-usage)
 - [Yukanoe Tag Manager](#yukanoe-tag-manager)
 - [Test/Demo](./tests)
@@ -73,10 +73,15 @@ if($username) {
 }
 ```
 
-## Quick setup guide
+## Quick setup using Composer (Recommended)
 
 ```bash
 composer require yukanoe/html
+```
+
+## Alternative method (Not Recommended)
+```
+include "Tag.php";
 ```
 
 ## Tag Usage
