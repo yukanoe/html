@@ -10,12 +10,11 @@ composer require yukanoe/html
 ```
 
 ## 2 Table of Contents
-- [Overview](#overview)
-- [Quick setup guide](#quick-setup-using-composer-recommended)
-- [Basic Usage](#basic-usage)
-- [Yukanoe Tag Manager](#yukanoe-tag-manager)
-- [Test/Demo](./tests)
-- [Examples](./examples)
+- [Overview](./overview.md)
+- [Quick setup guide](#3-html-php-with-tagmanager)
+- [Tag Basic Usage](#4-tag-usage)
+- [Test/Demo Directory](./tests)
+- [Examples Directory](./examples)
 - [Class Tag](./docs/CLASS-TAG.md)
 - [Class TagManager](./docs/CLASS-TAG-MANAGER.md)
 - [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
@@ -25,7 +24,9 @@ composer require yukanoe/html
 
 ## 3 HTML->PHP with TagManager
 
-### 3.1 Directory & File Structure
+**Directory: [/examples/project](./examples/project)**
+
+### 3.1 Directory & File Structure 
 ```
 project/
 │   build.php    
