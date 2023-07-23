@@ -1,6 +1,6 @@
-## Overview
+# Overview
 
-### Removing messy and hard-to-read code
+## Removing messy and hard-to-read code
 
 **index.php**
 ```php
@@ -30,7 +30,7 @@
 </html>
 ```
 
-### HTMLxPHP with TagManager
+## HTMLxPHP with TagManager
 
 **/html/index.html**
 ```html
