@@ -10,7 +10,7 @@ A PHP library , Simple, minimal and portable DOM.
 composer require yukanoe/html
 ```
 
-## Table of Contents
+## 1. Table of Contents
 - [Overview](#overview)
 - [Quick setup guide](#quick-setup-using-composer-recommended)
 - [Basic Usage](#basic-usage)
@@ -23,40 +23,40 @@ composer require yukanoe/html
 
 ...
 
-## Overview
 
-### Removing messy and hard-to-read code
+## 2. HTML->PHP with TagManager
 
-**index.php**
-```php
-<?php
-    // $usename = $_GET['username'] ?? '';
-    $username = 'admin' ?? '';
-?>
-<html>
-<head><title>
-<?php
-    if($username)
-      echo "HomePage";
-    else
-      echo "Hi, {$username}";
-?>
-</title></head>
-<body>
-<div>
-<?php
-    if($usename ?? '')
-        echo "{$usename}: Say anything.";
-    else
-        echo "Say a-ny--thin--g--.";
-?>
-</div>
-</body>
-</html>
+### 1. Directory & File Structure
+```
+project/
+│   build.php    
+│   index.php      
+│
+└───template-html/
+│   │   index.html
+│   │   ...
+│   
+└───template-php/
 ```
 
-### HTMLxPHP with TagManager
-**/html/index.html**
+### 2. Create build tool - build.php
+
+**build.php**
+```php
+require __DIR__.'/vendor/autoload.php';
+
+use \Yukanoe\HTML\TagManager;
+
+$inputDir   = './template-html';
+$outputDir  = './template-php';
+
+$tagManager = new TagManager;
+$tagManager->autoBuild($inputDir, $outputDir); 
+
+```
+### 3. Create html files
+
+**project/html/index.html**
 ```html
 <html>
   <head>
@@ -67,28 +67,34 @@ composer require yukanoe/html
   </body>
 </html>
 ```
-**index.php**
+
+### 4. Create php files
+**project/index.php**
 ```php
-require '/html/index.php';
-$username = 'admin' ?? '';
+<?php
+require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/template-php/index.php';
+
+$username = $_GET['username'] ?? '';
 if($username) {
     $avn['title']->text = "Hi, {$username}";
-    $avn['text']->text  = "{$usename}: Say anything.";
+    $avn['text']->text  = "{$username}: Say anything.";
 }
 ```
 
-## Quick setup using Composer (Recommended)
-
+### 4. Run build tool & Built-in Web server
 ```bash
+cd project/
 composer require yukanoe/html
+php build.php
+php -S localhost:8080 index.php
 ```
+## 5. Open
+- http://localhost:8080
+- http://localhost:8080/?username=admin
 
-## Alternative method (Not Recommended)
-```
-include "Tag.php";
-```
 
-## Tag Usage
+## 3. Tag Usage
 
 ### Class
 ```php
@@ -218,49 +224,6 @@ if($user == 'admin'){
   $center->attribute['class'] .= ' ruby';
   $center->text = $user;
 }
-```
-
-
-
-## Yukanoe Tag Manager
-
-### Create build tool - build.php
-
-**build.php**
-```php
-require __DIR__.'/vendor/autoload.php';
-
-use \Yukanoe\HTML\TagManager;
-
-$inputDir   = './html';
-$outputDir  = './html';
-
-$tagManager = new TagManager;
-$tagManager->autoBuild($inputDir, $outputDir); 
-
-```
-
-### Run build tool
-
-```bash
-php build.php
-```
-
-### usage
-
-**index.php**
-```php
-<?php
-require __DIR__.'/vendor/autoload.php';
-require __DIR__.'/html/index.php';
-
-echo "av: [".count($av)."], avn: ";
-foreach ($avn as $key => $value) {
-    echo "{$key},";
-}
-
-
-
 ```
 
 ## Author
