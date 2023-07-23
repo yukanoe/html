@@ -2,15 +2,14 @@
 
 A PHP library , Simple, minimal and portable DOM.
 
-**Try**
-[demo-01.yukanoe.org](https://github.com/yukanoe/demo-01.yukanoe.org)
+**Try:** [demo-01.yukanoe.org](https://github.com/yukanoe/demo-01.yukanoe.org)
 
-**Installation**
+## 1 Installation
 ```bash
 composer require yukanoe/html
 ```
 
-## 1. Table of Contents
+## 2 Table of Contents
 - [Overview](#overview)
 - [Quick setup guide](#quick-setup-using-composer-recommended)
 - [Basic Usage](#basic-usage)
@@ -24,9 +23,9 @@ composer require yukanoe/html
 ...
 
 
-## 2. HTML->PHP with TagManager
+## 3 HTML->PHP with TagManager
 
-### 1. Directory & File Structure
+### 3.1 Directory & File Structure
 ```
 project/
 │   build.php    
@@ -39,7 +38,7 @@ project/
 └───template-php/
 ```
 
-### 2. Create build tool - build.php
+### 3.2 Create build tool - build.php
 
 **build.php**
 ```php
@@ -54,7 +53,7 @@ $tagManager = new TagManager;
 $tagManager->autoBuild($inputDir, $outputDir); 
 
 ```
-### 3. Create html files
+### 3.3 Create html files
 
 **project/html/index.html**
 ```html
@@ -68,7 +67,7 @@ $tagManager->autoBuild($inputDir, $outputDir);
 </html>
 ```
 
-### 4. Create php files
+### 3.4 Create php files
 **project/index.php**
 ```php
 <?php
@@ -82,19 +81,19 @@ if($username) {
 }
 ```
 
-### 4. Run build tool & Built-in Web server
+### 3.5 Run build tool & Built-in Web server
 ```bash
 cd project/
 composer require yukanoe/html
 php build.php
 php -S localhost:8080 index.php
 ```
-## 5. Open
+## 3.6 Open
 - http://localhost:8080
 - http://localhost:8080/?username=admin
 
 
-## 3. Tag Usage
+## 4 Tag Usage
 
 ### Class
 ```php
