@@ -5,7 +5,8 @@ use \Yukanoe\HTML\TagManager\Compiler;
 use \Yukanoe\HTML\TagManager\Reducer;
 use \Yukanoe\HTML\TagManager\IO;
 
-class TagManager 
+
+class TagManager
 {
     private $domDocument;
     private $mainArr;
@@ -76,9 +77,17 @@ class TagManager
         if (!is_dir($outdir)) {
           mkdir($outdir, 0777, true);
         }
-        foreach (glob($indir.'/'."*.html") as $filename) {
+        $option    = \RecursiveDirectoryIterator::SKIP_DOTS;
+        $directory = new \RecursiveDirectoryIterator($indir, $option);
+        $iterator  = new \RecursiveIteratorIterator($directory);
+        $regex     = new \RegexIterator($iterator, '/^.+\.html$/i');
+        foreach ($regex as $filename) {
             $fileread = $filename;
-            $filesave = $outdir.'/'.basename($fileread, ".html").'.php';
+            $filesave = $outdir.substr($fileread, strlen($indir));
+            $filesave = substr($filesave, 0, (-1)*strlen('html')).'php';
+            if (!is_dir( dirname($filesave) )) {
+              mkdir(dirname($filesave), 0777, true);
+            }
             if(filesize($fileread) > 0) {
                 echo "\n[INFO] {$fileread} => {$filesave}";
                 $this->read($fileread)->build()->save($filesave);
