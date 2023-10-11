@@ -360,7 +360,7 @@ class Tag
             echo '] <br />';
             if (is_array($this->child) || is_object($this->child))
             foreach ($this->child as $key => $value) {
-                echo "<b>{$GlobalVarName}-></b>Child[$key] = ";
+                echo "<b>{$GlobalVarName}-></b>child[$key] = ";
                 $value->trace();
             } 
             echo $this->text.'[/'.$this->name.']';
