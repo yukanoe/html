@@ -1,5 +1,7 @@
 <?php
 namespace Yukanoe\HTML\TagManager;
+
+use Yukanoe\HTML\Tag;
 /**
  * 
  */
@@ -9,6 +11,10 @@ class Compiler
     private $avStatements   = [];
     private $avCounter      = 0;
 
+    public $tag;
+    public $tagRoot;
+    public $tagName = [];
+
     public static $regVarName = 'av';
     public static $aliVarName = 'avn';
 
@@ -17,10 +23,33 @@ class Compiler
         return $this;
     }
 
+    public function getTagRoot()
+    {
+        return $this->tagRoot;
+    }
+
+    public function getTagName()
+    {
+        return $this->tagName;
+    }
+
+    public function compileRealTime($domDocument)
+    {
+        $this->runBuildTool($domDocument);
+        $this->getTagAlias();
+        if($this->tag[1] instanceof Tag){
+            $this->tagRoot = $this->tag[1];
+        }
+        return [
+            'root' => $this->getTagRoot(),
+            'name' => $this->getTagName()
+        ];
+    }
+
     public function free()
     {
         $this->avStatements = [];
-        $this->avCounter = 0;
+        $this->avCounter    = 0;
     }
 
     public function fixSingleQuote($v_innerHTML)
@@ -47,6 +76,7 @@ class Compiler
         $AVN    = self::$aliVarName;
         foreach ($this->listAlias as $key => $id) {
             array_push($Result, "\${$AVN}['{$key}'] = \${$AV}[{$id}];");
+            $this->tagName[$key] = $this->tag[$id];
         }
         return $Result;
     }
@@ -81,7 +111,20 @@ class Compiler
             
             $Logger->debug("START Render of {$this->avCounter} ");
 
+            // gen statement
             $Statement = "{$YUT_AV}[{$this->avCounter}] = new Tag('{$Root->nodeName}', $string_att, '');";
+            // exec statement
+            $arrAttribute = [];
+            if($Root->hasAttributes()) {
+                foreach($Root->attributes as $attribute) {
+                    $arrAttribute[$attribute->name] = $attribute->value;
+                }
+            }
+            $this->tag[$this->avCounter] = new Tag(
+                $Root->nodeName,
+                $arrAttribute,
+                ''
+            );
 
             $Logger->info("$Statement");
 
@@ -90,6 +133,7 @@ class Compiler
             if($Leaf){
                 $Logger->debug("AddLink");
                 $Statement =  "{$YUT_AV}[{$Leaf}]->addChild({$YUT_AV}[{$this->avCounter}]);";
+                $this->tag[$Leaf]->addChild($this->tag[$this->avCounter]);
                 $Logger->info("$Statement");
                 array_push($this->avStatements, $Statement);
             }
@@ -108,7 +152,11 @@ class Compiler
                         $Text = $this->fixSingleQuote($Text);
                         
                         //echo "<br />IGOTIT@1";
+                        // gen statemtnt
                         $Statement = "{$YUT_AV}[{$this->avCounter}]->text = '$Text';";
+                        // exec statement
+                        $this->tag[$this->avCounter]->text = $Text;
+
                         $Logger->info("$Statement");
                         array_push($this->avStatements, $Statement);
                     
@@ -140,6 +188,8 @@ class Compiler
                 $this->avCounter++;
 
                 $Statement = "{$YUT_AV}[{$this->avCounter}] = new Tag('{$tagName}', [], '');";
+                $this->tag[$this->avCounter] = new Tag($tagName, [], '');
+
                 $Logger->info("$Statement");
                 array_push($this->avStatements, $Statement);
 
@@ -147,12 +197,16 @@ class Compiler
 
                 $PValue    = $this->fixSingleQuote($PValue);
                 $Statement = "{$YUT_AV}[{$this->avCounter}]->text = '$PValue';";
+                $this->tag[$this->avCounter]->text = $Root->nodeValue;
+
                 $Logger->info("$Statement");
                 array_push($this->avStatements, $Statement);
 
                 if($Leaf){
                     $Logger->debug("AddLink");
                     $Statement =  "{$YUT_AV}[{$Leaf}]->addChild({$YUT_AV}[{$this->avCounter}]);";
+                    $this->tag[$Leaf]->addChild($this->tag[$this->avCounter]);
+
                     $Logger->info("$Statement");
                     array_push($this->avStatements, $Statement);
                 }
