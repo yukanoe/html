@@ -31,6 +31,12 @@ class TagManager
         return $this;
     }
 
+    public function readRealTimeRaw($html)
+    {
+        $this->domDocument = $this->IO->readHTMLRaw($html);
+        return (new Compiler)->compileRealTime($this->domDocument);
+    }
+
     public function readRealTime($file)
     {
         $domDocument = $this->IO->readHTMLFile($file);

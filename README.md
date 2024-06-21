@@ -226,6 +226,20 @@ if($user == 'admin'){
 }
 ```
 
+## DOMDocument
+### php 8.3 and below - default character set ISO-8859-1
+DOMDocument::loadHTML will treat your string as being in ISO-8859-1 (the HTTP/1.1 default character set) unless you tell it otherwise. This results in UTF-8 strings being interpreted incorrectly.
+
+- <meta charset="utf-8" />
+- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+is required
+
+### php 8.4 - DOM HTML5 parsing and serialization
+https://wiki.php.net/rfc/domdocument_html5_parser
+https://wiki.php.net/todo/php84 - Jul 16 2024   Feature freeze
+How PHP 8.4 Will Be Improved to Provide Better Support to Parse and Process HTML5 Pages and Files
+
+
 ## Author
 kirishimayuu (kirishimayuu@yukanoe.org)
 

@@ -4,7 +4,7 @@ namespace Yukanoe\HTML;
  * 
  *   Tag::$singletonTags = Tag::$singletonAllTags;
  *   Tag::$autoFlush     = false;
- *   data-yukanoe-hidden = ""
+ *   data-yukanoe-hidden = "hiden"
  * 
  */
 class Tag
@@ -151,7 +151,18 @@ class Tag
         }
         return $this;
     }
-
+    public function getChildsByTagName(string $name='', array &$tags = [])
+    {
+        if(!isset($tags))
+            $tags = [];
+        if($this->name == $name) {
+            array_push($tags, $this);
+        }
+        foreach ($this->child as &$value) {
+            $value->getChildsByTagName($name, $tags);
+        }
+        return $tags;
+    }
 
     
 
@@ -254,12 +265,13 @@ class Tag
     //hidden / empty
     public function hide()
     {
-        $this->attribute['data-yukanoe-hidden'] = 'true';
+        $this->attribute['data-yukanoe-hidden'] = 'hidden';
         return $this;
     }
     public function show()
     {
-        $this->attribute['data-yukanoe-hidden'] = 'false';
+        if(isset($this->attribute['data-yukanoe-hidden']))
+            unset($this->attribute['data-yukanoe-hidden']);
         return $this;
     }
     
@@ -288,13 +300,24 @@ class Tag
         return $code_html;
     }
 
+    public function exportYD(array &$tagName = [])
+    {
+        if(!isset($tagName))
+            $tagName = [];
+        if(isset($this->attribute['data-yukanoe-id'])){
+            $tagName[$this->attribute['data-yukanoe-id']] = $this;
+        }
+        foreach ($this->child as &$value) {
+            $value->exportYD($tagName);
+        }
+        return $tagName;
+    }
+
     public function flush()
     {
-
-        //attribute[data-yukanoe-hidden] == "true" => skip;
+        //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
         if(isset($this->attribute['data-yukanoe-hidden']))
-            if( $this->attribute['data-yukanoe-hidden'] == "true")
-                return;
+            return;
 
         //prepend doctype html
         if($this->name == 'html')
@@ -319,6 +342,46 @@ class Tag
                 $value->flush();
             }
             echo $this->text.'</'.$this->name.'>';
+        }
+
+    }
+
+    // DEVEL
+    public function flushByResponse(&$response)
+    {
+        //attribute[data-yukanoe-hidden] == "true" => skip;
+        if(isset($this->attribute['data-yukanoe-hidden']))
+            return;
+
+        //prepend doctype html
+        if($this->name == 'html')
+            $response->write(self::$documentType);
+            //echo self::$documentType;
+
+        //tag name + att
+        //echo '<'.$this->name;
+        $response->write('<'.$this->name);
+
+        if (is_array($this->attribute) || is_object($this->attribute))
+            foreach ($this->attribute as $key => $value) {
+                //echo " $key=\"$value\" ";
+                $response->write(" $key=\"$value\" ");
+            }
+
+        if(in_array($this->name, self::$singletonTags)) {
+            //Singleton tag -> self closing
+            //echo ' />';
+            $response->write(' />');
+        } else {
+            //Multipart Tag
+            //echo '>';
+            $response->write('>');
+            if (is_array($this->child) || is_object($this->child))
+            foreach ($this->child as $value) {
+                $value->flushByResponse($response);
+            }
+            $response->write($this->text.'</'.$this->name.'>');
+            //echo $this->text.'</'.$this->name.'>';
         }
 
     }

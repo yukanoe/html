@@ -3,7 +3,10 @@ namespace Yukanoe\HTML\TagManager;
 
 use Yukanoe\HTML\Tag;
 /**
- * 
+ *   plan:
+ *   $this->tagRoot    : ROOT Tag[x]
+ *   $this->tagName[?] : Alias data-yukanoe-id=? [x]
+ *   $this->tagId[?]   : Alias id=? []
  */
 class Compiler
 {
@@ -37,13 +40,8 @@ class Compiler
     {
         $this->runBuildTool($domDocument);
         $this->getTagAlias();
-        if($this->tag[1] instanceof Tag){
-            $this->tagRoot = $this->tag[1];
-        }
-        return [
-            'root' => $this->getTagRoot(),
-            'name' => $this->getTagName()
-        ];
+        $this->tagRoot = $this->tag[1] ?? NULL;
+        return $this->getTagRoot();
     }
 
     public function free()
