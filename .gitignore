@@ -1,19 +1,11 @@
-
-
 .idea/
+
+coverage/
+.phpunit.result.cache
 
 vendor/
 composer.phar
 composer.lock
 
-
-examples/project/template-php/
-examples/project/vendor/
-examples/project/composer.phar
-examples/project/composer.lock
-
-tests/template-php/
-tests/vendor/
-tests/composer.phar
-tests/composer.lock
+examples/TemplatePHP/
 

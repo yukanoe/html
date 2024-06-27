@@ -3,9 +3,13 @@
 1.0.0=>2.0.0
 
 
-## [1.0.8 Unreleased] - 2024-??-??
+## [1.0.8] - 2024-06-27
 
 ### Added
+- __dir__ support (default)
+ + ./inc/meta.html     === __dir__/inc/meta.html
+ + ../inc/meta.html    === __dir__/../inc/meta.html
+ + ../../inc/meta.html === __dir__/../../inc/meta.html
 
 ### Changed
 - data-yukanoe-hidden

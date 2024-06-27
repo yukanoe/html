@@ -22,6 +22,7 @@ class IO
 	    	throw new \Exception('Max include files.');
 
 	    $raw     = file_get_contents($filepath);
+
 	    $pattern = '/\<\!\-\- *data-yukanoe-include\=\"(.+?\.html)\" *\-\-\>/';
 	    $subject = $raw;
 	    $matches = NULL;
@@ -33,6 +34,11 @@ class IO
 	    while ($i < $max) {
 	    	$include_html = $matches[0][$i] ?? '';
 	    	$include_file = $matches[1][$i] ?? '';
+	    	//__dir__ => currentDir
+	    	if ( strtolower(substr($include_file, 0, 7)) == "__dir__") {
+	    		$currentdir   = pathinfo($filepath)['dirname'] ?? '';
+	    		$include_file = $currentdir . substr($include_file, 7);
+	    	}
 	    	if(!is_file($include_file)) {
 	    		//try with samefolder
 	    		$currentdir   = pathinfo($filepath)['dirname'] ?? '';

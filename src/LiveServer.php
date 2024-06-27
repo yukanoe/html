@@ -1,14 +1,6 @@
 <?php 
-namespace Yukanoe\HTML;
-/**
- *
- * live-server.php:
- * (new \Yukanoe\Tag\LiveServer)->create();
- *
- * php -S localhost:8080 live-server.php
- *
-*/
 
+namespace Yukanoe\HTML;
 
 class LiveServer
 {
@@ -26,6 +18,11 @@ class LiveServer
 	}
 
 	public function create(): void
+	{
+		$this->start();
+	}
+
+	public function start(): void
 	{
 		// Routing
 		// default

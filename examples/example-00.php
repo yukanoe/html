@@ -1,12 +1,6 @@
 <?php 
-/**
- * 
- *   composer require yukanoe/html
- *   php -S localhost:8080 example-00.php
- * 
- */
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/bootstrap.php';
 
 use \Yukanoe\HTML\Tag;
 
