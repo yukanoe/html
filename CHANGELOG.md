@@ -3,10 +3,11 @@
 1.0.0=>2.0.0
 
 
-## [1.0.8] - 2024-06-27
+## [1.0.8-1.0.9 Unreleased] - 2024-??-??
 
 ### Added
-- __dir__ support (default)
+- LiveServer MIME
+- __dir__ supported (default)
  + ./inc/meta.html     === __dir__/inc/meta.html
  + ../inc/meta.html    === __dir__/../inc/meta.html
  + ../../inc/meta.html === __dir__/../../inc/meta.html
