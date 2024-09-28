@@ -84,8 +84,8 @@ class Tag
         }
         if(!isset($vAtt[1]))
             return $this;
-        if( is_string($vAtt[0]) && is_string($vAtt[1]) )
-            $this->attribute = $vAtt[0]; 
+        if(is_string($vAtt[0]) && is_string($vAtt[1]))
+            $this->attribute[$vAtt[0]] = $vAtt[1];
         return $this;
     }
 
@@ -312,6 +312,48 @@ class Tag
         }
         return $tagName;
     }
+
+
+    public function flushBuffer(string &$buffer)
+    {
+        $buffer ??= "";
+        //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
+        if(isset($this->attribute['data-yukanoe-hidden']))
+            return;
+
+        //prepend doctype html
+        if($this->name == 'html'){
+            //echo self::$documentType;
+            $buffer .= self::$documentType;
+        }
+
+        //tag name + att
+        //echo '<'.$this->name;
+        $buffer .= '<'.$this->name;
+
+
+
+        if (is_array($this->attribute) || is_object($this->attribute))
+            foreach ($this->attribute as $key => $value) {
+                $buffer .= " $key=\"$value\" ";
+            }
+
+        if(in_array($this->name, self::$singletonTags)) {
+            //Singleton tag -> self closing
+            $buffer .= ' />';
+        } else {
+            //Multipart Tag
+            $buffer .=  '>';
+            if (is_array($this->child) || is_object($this->child))
+            foreach ($this->child as $value) {
+                $value->flushBuffer($buffer);
+            }
+            $buffer .= $this->text.'</'.$this->name.'>';
+        }
+
+
+    }
+
 
     public function flush()
     {

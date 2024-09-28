@@ -6,6 +6,7 @@
 ## [1.0.8-1.0.9 Unreleased] - 2024-??-??
 
 ### Added
+- add Tag::flushBuffer(string &$buffer): void
 - LiveServer MIME
 - __dir__ supported (default)
  + ./inc/meta.html     === __dir__/inc/meta.html
