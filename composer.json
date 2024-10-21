@@ -1,6 +1,5 @@
 {
     "name": "yukanoe/html",
-    "version": "1.0.10",
     "description": "A PHP library - Minimal, Simple and Portable DOM.",
     "keywords": ["yukanoe","html","xhtml","dom"],
     "homepage": "https://github.com/yukanoe/html",

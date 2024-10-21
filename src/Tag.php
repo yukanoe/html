@@ -65,26 +65,26 @@ class Tag
     }
 
     //TRUE-SET-MODE:START
-    public function setName($name)
+    public function setName(string $name): Tag
     {
         $this->name = $name;
         return $this;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setAttribute(...$vAtt)
+    public function setAttribute(...$vAtt): Tag
     {
-        if(is_array($vAtt[0])) {
+        if (is_array($vAtt[0])) {
             $this->attribute = $vAtt[0];
             return $this;
         }
-        if(!isset($vAtt[1]))
+        if (!isset($vAtt[1]))
             return $this;
-        if(is_string($vAtt[0]) && is_string($vAtt[1]))
+        if (is_string($vAtt[0]) && is_string($vAtt[1]))
             $this->attribute[$vAtt[0]] = $vAtt[1];
         return $this;
     }
@@ -95,12 +95,12 @@ class Tag
         return $this->attribute;
     }
 
-    public function setText($text)
+    public function setText(string $text): Tag
     {
         $this->text = $text;
         return $this;
     }
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
@@ -313,13 +313,20 @@ class Tag
         return $tagName;
     }
 
+    public static function restrictText(string $str): string
+    {
+        return htmlspecialchars($str);
+    }
 
     public function flushBuffer(string &$buffer)
     {
         $buffer ??= "";
+
         //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
         if(isset($this->attribute['data-yukanoe-hidden']))
             return;
+
+        $restricted = isset($this->attribute['data-yukanoe-restricted']);
 
         //prepend doctype html
         if($this->name == 'html'){
@@ -331,10 +338,11 @@ class Tag
         //echo '<'.$this->name;
         $buffer .= '<'.$this->name;
 
-
-
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
+                if ($restricted) {
+                    $value = self::restrictText($value);
+                }
                 $buffer .= " $key=\"$value\" ";
             }
 
@@ -347,6 +355,9 @@ class Tag
             if (is_array($this->child) || is_object($this->child))
             foreach ($this->child as $value) {
                 $value->flushBuffer($buffer);
+            }
+            if ($restricted) {
+                $this->text = self::restrictText($this->text);
             }
             $buffer .= $this->text.'</'.$this->name.'>';
         }
@@ -361,6 +372,8 @@ class Tag
         if(isset($this->attribute['data-yukanoe-hidden']))
             return;
 
+        $restricted = isset($this->attribute['data-yukanoe-restricted']);
+
         //prepend doctype html
         if($this->name == 'html')
             echo self::$documentType;
@@ -370,6 +383,9 @@ class Tag
 
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
+                if ($restricted) {
+                    $value = self::restrictText($value);
+                }
                 echo " $key=\"$value\" ";
             }
 
@@ -382,6 +398,9 @@ class Tag
             if (is_array($this->child) || is_object($this->child))
             foreach ($this->child as $value) {
                 $value->flush();
+            }
+            if ($restricted) {
+                $this->text = self::restrictText($this->text);
             }
             echo $this->text.'</'.$this->name.'>';
         }

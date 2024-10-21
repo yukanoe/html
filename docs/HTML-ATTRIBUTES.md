@@ -1,8 +1,15 @@
 # Private HTML Attributes
 
+ - What are `data-yukanoe-*` attributes?
+
+ - `data`: HTML5 custom data attributes prefixed with data-. docs: https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+
+ - `yukanoe`: namespace yukanoe
+
 ## HTML Attributes
  - Tag
-   + `data-yukanoe-hidden="true/false"`
+   + `data-yukanoe-hidden="any"`
+   + `data-yukanoe-restricted="any"`
 
  - Tag Manager
    + `data-yukanoe-id="string"`
@@ -20,8 +27,8 @@ $avn['title']->text = "New Title";
 
 ### data-yukanoe-hidden (hide/show)
 
-- Hide: `data-yukanoe-hidden="true"`
-- Show: `data-yukanoe-hidden="false"`
+- Hide: default
+- Show: isset(`data-yukanoe-hidden`)
 
 **index.html**
 ```html
@@ -34,8 +41,15 @@ $avn['title']->text = "New Title";
 $avn['message']->show();
 
 // method 2
-$avn['message']->atttribute['data-yukanoe-hidden'] = "false";
+$avn['message']->atttribute['data-yukanoe-hidden'] = "hidden";
 ```
+
+### data-yukanoe-restricted
+
+    enable/disable htmlspecialchars
+
+- default: disable
+- isset(data-yukanoe-restricted) => enable
 
 ## Safety Import Guide
 
