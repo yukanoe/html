@@ -270,6 +270,18 @@ class Tag
         return $this;
     }
 
+    public function restrict(): Tag
+    {
+        $this->attribute['data-yukanoe-restricted'] = 'restricted';
+        return $this;
+    }
+    public function unrestrict(): Tag
+    {
+        if (isset($this->attribute['data-yukanoe-restricted']))
+            unset($this->attribute['data-yukanoe-restricted']);
+        return $this;
+    }
+
     public function empty(): Tag
     {
         $this->name = 'yukanoe-empty';

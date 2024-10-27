@@ -1,11 +1,11 @@
 
 # Examples
 
-## Live Server
-
 ```bash
 php -S <localhost>:<port> <example-file.php>
 ```
+
+## Live Server
 
 ```bash
 # Lazy

@@ -10,15 +10,16 @@ composer require yukanoe/html
 ```
 
 ## 2 Table of Contents
-- [Overview](./overview.md)
-- [Tag Basic Usage](#get-started)
-- [Test/Demo Directory](./tests)
-- [Examples Directory](./examples)
-- [Class Tag](./docs/CLASS-TAG.md)
-- [Class TagManager](./docs/CLASS-TAG-MANAGER.md)
-- [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
 
-## Get started
+- [Class `Yukanoe\HTML\Tag`](./docs/CLASS-TAG.md)
+- [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
+- (optional) [Overview](./overview.md)
+- (optional) [Test/Demo Directory](./tests)
+- (optional) [Examples Directory](./examples)
+- (optional) [Class TagManager](./docs/CLASS-TAG-MANAGER.md)
+
+
+## 3 Get started
 
 ### Create Tag
 ```php
@@ -64,11 +65,11 @@ $div->addChild([$h1, $p]);
 </html>
 ```
 
-## Basic Usage
+## 4 Basic Usage
 
-### set attribute
+### 4.1 set attribute
 
-#### public attributes
+#### 4.1.1 public attributes
 ```php
 $myTag->name = "div"
 // class attribute
@@ -78,26 +79,26 @@ $myTag->attribute = ['class'=>'card'];
 // text
 $myTag->text = 'string 123456789';
 ```
-#### public methods
+#### 4.1.2 public methods
 ```php
 $myTag->setName('div');
 $myTag->setAttribute(['class'=>'card']);
 $myTag->setAttribute('class', 'card');
 $myTag->setText('string 123456789');
 ```
-### hide/show: hide/show a Tag
+### 4.2 hide/show: hide/show a Tag
 ```php
 $myTag->hide();
 $myTag->show();
 ```
 
-### strict: htmlspecialchars 
+### 4.3 restrict: htmlspecialchars(content)
 ```php
-$myTag->strict();
+$myTag->restrict(string $scope='restricted');
+$myTag->restrict(string $scope='none');
 ```
 
-
-### addChild 
+### 4.4 addChild 
 
 
 ```php

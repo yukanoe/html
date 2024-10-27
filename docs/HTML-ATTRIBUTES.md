@@ -1,21 +1,38 @@
 # Private HTML Attributes
 
-    What are "data-yukanoe-*" attributes?
+## 1. What are "data-yukanoe-*" attributes?
 
  - `data`: [HTML5 custom data attributes prefixed with data-.](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
 
  - `yukanoe`: namespace yukanoe
 
-## HTML Attributes
- - Tag
-   + `data-yukanoe-hidden="any"`
-   + `data-yukanoe-restricted="any"`
+## 2. list HTML Attributes & Comment
 
- - Tag Manager
-   + `data-yukanoe-id="string"`
-   + `<!-- data-yukanoe-include="filepath.html" -->`
+- Include files other:
+```html
+<!-- data-yukanoe-include="filepath.html" -->
+```
+- Control HTML Tag
+```html
+<div
+        data-yukanoe-id="my-div" 
+        data-yukanoe-hidden="hidden" 
+        data-yukanoe-restricted="restricted"
+>
 
-### data-yukanoe-id ( $avn['id'] )
+   My Text 132456
+
+</div>
+```
+| name                      | value                |       
+|---------------------------|----------------------|
+| `data-yukanoe-id`         | `string-id`          |
+| `data-yukanoe-hidden`     | `hidden`, `any`      |
+| `data-yukanoe-restricted` | `restricted`, `any`  |
+
+
+
+### 2.1 ID `data-yukanoe-id` ($avn['id'])
 **index.html**
 ```html
 <title data-yukanoe-id="title">HomePage</title>
@@ -25,35 +42,71 @@
 $avn['title']->text = "New Title";
 ```
 
-### data-yukanoe-hidden (hide/show)
+### 2.2 HIDDEN `data-yukanoe-hidden` (hide/show)
+    hide/show tag
 
 - Hide: default
 - Show: isset(`data-yukanoe-hidden`)
 
-**index.html**
+
 ```html
-<div data-yukanoe-id="message" data-yukanoe-hidden="true">Hi Admin!</div>
+<div data-yukanoe-id="message" data-yukanoe-hidden="hidden">
+    Hi Admin!
+</div>
 ```
-**index.php**
 
 ```php
-// method 1 (recommended)
+// optional 1 (recommended)
 $avn['message']->show();
+$avn['message']->hide();
 
-// method 2
+// optional 2
 $avn['message']->atttribute['data-yukanoe-hidden'] = "hidden";
+unset($avn['message']->atttribute['data-yukanoe-hidden'])
 ```
 
-### data-yukanoe-restricted
+### 2.3 RESTRICTED `data-yukanoe-restricted`
 
     enable/disable htmlspecialchars
 
-- default: disable
-- isset(data-yukanoe-restricted) => enable
+- default: disabled
+- `isset(data-yukanoe-restricted)`: enabled
+```html
+<div data-yukanoe-id="message" data-yukanoe-restricted="restricted">
+    Hi Admin!
+</div>
+```
 
-## Safety Import Guide
+```php
+// optional 1 (recommended)
+$avn['message']->unrestrict();
+$avn['message']->restrict();
 
-### Directory & File Structure
+// optional 2
+$avn['message']->atttribute['data-yukanoe-restricted'] = "restricted";
+unset($avn['message']->atttribute['data-yukanoe-restricted'])
+```
+
+## 3. Safety Import Guide
+
+### 3.1 `__dir__` The directory of the file
+- examples:
+- lv1: `./`      => `__dir__` 
+- lv2: `../`     => `__dir__/../`
+- lvn: `../../`  => `__dir__/../../`
+
+```html
+
+<!-- data-yukanoe-include="__dir__/components/alert.html" -->
+
+<!-- data-yukanoe-include="__dir__/./components/alert.html" -->
+
+<!-- data-yukanoe-include="__dir__/../components/alert.html" -->
+
+```
+
+
+### 3.2 Directory & File Structure
 ```
 id-yukanoe-html
 │
@@ -65,9 +118,10 @@ id-yukanoe-html
 
 ```
 
-### Detail
+### 3.2 Detail
 
-- 1. **index.php**
+1. **index.php**
+
 ```html
 <!doctype html>
 <html data-theme="dark">
@@ -81,7 +135,7 @@ id-yukanoe-html
 
 ```
 
-- 2. **head.html**
+2. **head.html**
 ```html
 <head>
   <meta charset="UTF-8">
@@ -91,13 +145,12 @@ id-yukanoe-html
 </head>
 ```
 
-- 3. **body-header.html**
+3. **body-header.html**
 ```html
 <nav>...</nav>
 ```
 
-- 4. **body-footer.html**
+4. **body-footer.html**
 ```html
 <footer>...</footer>
 ```
-
