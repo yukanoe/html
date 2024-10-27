@@ -1,19 +1,20 @@
 <?php
+
 namespace Yukanoe\HTML;
 /**
- * 
+ *
  *   Tag::$singletonTags = Tag::$singletonAllTags;
  *   Tag::$autoFlush     = false;
  *   data-yukanoe-hidden = "hiden"
- * 
+ *
  */
 class Tag
 {
-    public $name      = '';
-    public $text      = '';
+    public $name = '';
+    public $text = '';
     public $attribute = [];
-    public $parent    = NULL;
-    public $child     = [];
+    public $parent = NULL;
+    public $child = [];
 
     // Alias
     public $n;
@@ -23,15 +24,15 @@ class Tag
     public $c;
 
     // Configurable
-    public static $autoFlush        = true;
-    public static $documentType     = '<!DOCTYPE html>'; 
-    public static $singletonTags    = ['img', 'meta', 'input', 'link', 'br', 'source','hr','area', 'source', 'track'];
+    public static $autoFlush = true;
+    public static $documentType = '<!DOCTYPE html>';
+    public static $singletonTags = ['img', 'meta', 'input', 'link', 'br', 'source', 'hr', 'area', 'source', 'track'];
 
     // Non-configurable
-    public static $singletonAllTags = ['area','base','basefont','bgsound','br','col','command','embed','frame','hr','image','img','input','isindex','keygen','link','menuitem','meta','nextid','param','source','track','wbr'];
+    public static $singletonAllTags = ['area', 'base', 'basefont', 'bgsound', 'br', 'col', 'command', 'embed', 'frame', 'hr', 'image', 'img', 'input', 'isindex', 'keygen', 'link', 'menuitem', 'meta', 'nextid', 'param', 'source', 'track', 'wbr'];
     public static $traceCounter = 0;
 
-    public function __construct($name='', $attribute=[], $text='')
+    public function __construct($name = '', $attribute = [], $text = '')
     {
         $n = &$this->name;
         $a = &$this->attribute;
@@ -39,25 +40,24 @@ class Tag
         $p = &$this->parent;
         $c = &$this->child;
         // init
-        $this->name      = $name;
+        $this->name = $name;
         $this->attribute = $attribute;
-        $this->text      = $text;
-        return $this;
+        $this->text = $text;
     }
 
     public function __destruct()
     {
-        if(self::$autoFlush)
-            if($this->name == 'html')
+        if (self::$autoFlush)
+            if ($this->name == 'html')
                 $this->flush();
     }
 
-    public function __clone() 
+    public function __clone()
     {
         foreach ($this->child as &$value)
             $value = clone $value;
     }
-    
+
     public function __set($key, $value)
     {
         if ($key = 'addChild')
@@ -100,6 +100,7 @@ class Tag
         $this->text = $text;
         return $this;
     }
+
     public function getText(): string
     {
         return $this->text;
@@ -121,9 +122,10 @@ class Tag
     public function appendChild($tag)
     {
         $tag->setParent($this);
-        array_push($this->child, $tag);
+        $this->child[] = $tag;
         return $this;
     }
+
     public function prependChild($tag)
     {
         $tag->setParent($this);
@@ -137,26 +139,28 @@ class Tag
         $Find = $this;
         while ($Find->parent)
             $Find = $Find->parent;
-        if($Find instanceof Tag)
+        if ($Find instanceof Tag)
             return $Find;
         return $this;
     }
+
     public function getAncestorByName($search)
     {
         $Find = $this;
         while ($Find->parent) {
             $Find = $Find->parent;
-            if($Find->name == $search)
+            if ($Find->name == $search)
                 return $Find;
         }
         return $this;
     }
-    public function getChildsByTagName(string $name='', array &$tags = [])
+
+    public function getChildsByTagName(string $name = '', array &$tags = [])
     {
-        if(!isset($tags))
+        if (!isset($tags))
             $tags = [];
-        if($this->name == $name) {
-            array_push($tags, $this);
+        if ($this->name == $name) {
+            $tags[] = $this;
         }
         foreach ($this->child as &$value) {
             $value->getChildsByTagName($name, $tags);
@@ -164,7 +168,6 @@ class Tag
         return $tags;
     }
 
-    
 
     // Add CHILD FUNCTION LIST
     public function addChild(...$v)
@@ -172,13 +175,13 @@ class Tag
         //Variable-length argument lists
         foreach ($v as $Element) {
             //Array
-            if( is_array($Element) )
-                foreach ($Element as $value) 
+            if (is_array($Element))
+                foreach ($Element as $value)
                     $this->addChild($value);
-            else{
+            else {
                 //checking safe tag
                 try {
-                    if($Element instanceof Tag)
+                    if ($Element instanceof Tag)
                         $this->appendChild($Element);
                     else
                         throw new \Exception('addChild(non-\Yukanoe\HTML\Tag)');
@@ -190,6 +193,7 @@ class Tag
         }
         return $this;
     }
+
     //*Specail
     public function addChildException($e)
     {
@@ -201,7 +205,7 @@ class Tag
         echo "=============================================== <br />";
         echo "= Yukanoe Trace : START <br />";
         echo "===============================================<br />";
-        echo 'Error: ',  $e->getMessage(), "<br />";
+        echo 'Error: ', $e->getMessage(), "<br />";
         echo "<br />";
         foreach ($e->getTrace() as $value) {
             echo "=== Trace ================================== <br />";
@@ -209,7 +213,9 @@ class Tag
             echo "= . . . File: <b>$value[file]</b> - line: <b>$value[line]</b><br />";
             echo "= . . . Function: $value[class]$value[type]$value[function](<b>Args</b>)<br />";
             echo "= . . . <b>var_dump(Args)</b> Detail:<br />";
-            echo "= . . . "; var_dump($value['args']); echo "<br />";
+            echo "= . . . ";
+            var_dump($value['args']);
+            echo "<br />";
             echo "=<br />";
             echo "============================================<br />";
         }
@@ -217,21 +223,22 @@ class Tag
 
     // Injection
     public function insertAfter($tag)
-    { 
-        if( !($tag->parent instanceof Tag) )
+    {
+        if (!($tag->parent instanceof Tag))
             return $this;
         $offset = array_search($tag, $tag->parent->child) + 1;
-        if($offset >= 0)
-            array_splice( $tag->parent->child, $offset, 0, [$this] );
+        if ($offset >= 0)
+            array_splice($tag->parent->child, $offset, 0, [$this]);
         return $this;
     }
+
     public function insertBefore($tag)
-    { 
-        if( !($tag->parent instanceof Tag) )
+    {
+        if (!($tag->parent instanceof Tag))
             return $this;
         $offset = array_search($tag, $tag->parent->child);
-        if($offset >= 0)
-            array_splice( $tag->parent->child, $offset, 0, [$this] );
+        if ($offset >= 0)
+            array_splice($tag->parent->child, $offset, 0, [$this]);
         return $this;
     }
 
@@ -257,7 +264,7 @@ class Tag
 
     public function removeChildIndex($Index)
     {
-        if ( isset($this->child[$Index]) )
+        if (isset($this->child[$Index]))
             $this->removeChild($this->child[$Index]);
         return $this;
     }
@@ -268,21 +275,23 @@ class Tag
         $this->attribute['data-yukanoe-hidden'] = 'hidden';
         return $this;
     }
+
     public function show()
     {
-        if(isset($this->attribute['data-yukanoe-hidden']))
+        if (isset($this->attribute['data-yukanoe-hidden']))
             unset($this->attribute['data-yukanoe-hidden']);
         return $this;
     }
-    
+
     public function empty()
     {
-        $this->name      = 'yukanoe-empty';
+        $this->name = 'yukanoe-empty';
         $this->attribute = [];
-        $this->child     = [];
-        $this->text      = '';
+        $this->child = [];
+        $this->text = '';
         return $this;
     }
+
     public function destroy()
     {
         $this->empty();
@@ -292,19 +301,19 @@ class Tag
 
     public function get()
     {
-        $code_html = '<'.$this->name;
+        $code_html = '<' . $this->name;
         foreach ($this->attribute as $key => $value) {
-            $code_html .= ' '.$key.'="'.$value.'"';
+            $code_html .= ' ' . $key . '="' . $value . '"';
         }
-        $code_html .='> '.$this->text.'</'.$this->name.'>';
+        $code_html .= '> ' . $this->text . '</' . $this->name . '>';
         return $code_html;
     }
 
     public function exportYD(array &$tagName = [])
     {
-        if(!isset($tagName))
+        if (!isset($tagName))
             $tagName = [];
-        if(isset($this->attribute['data-yukanoe-id'])){
+        if (isset($this->attribute['data-yukanoe-id'])) {
             $tagName[$this->attribute['data-yukanoe-id']] = $this;
         }
         foreach ($this->child as &$value) {
@@ -323,20 +332,20 @@ class Tag
         $buffer ??= "";
 
         //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
-        if(isset($this->attribute['data-yukanoe-hidden']))
+        if (isset($this->attribute['data-yukanoe-hidden']))
             return;
 
         $restricted = isset($this->attribute['data-yukanoe-restricted']);
 
         //prepend doctype html
-        if($this->name == 'html'){
+        if ($this->name == 'html') {
             //echo self::$documentType;
             $buffer .= self::$documentType;
         }
 
         //tag name + att
         //echo '<'.$this->name;
-        $buffer .= '<'.$this->name;
+        $buffer .= '<' . $this->name;
 
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
@@ -346,20 +355,20 @@ class Tag
                 $buffer .= " $key=\"$value\" ";
             }
 
-        if(in_array($this->name, self::$singletonTags)) {
+        if (in_array($this->name, self::$singletonTags)) {
             //Singleton tag -> self closing
             $buffer .= ' />';
         } else {
             //Multipart Tag
-            $buffer .=  '>';
+            $buffer .= '>';
             if (is_array($this->child) || is_object($this->child))
-            foreach ($this->child as $value) {
-                $value->flushBuffer($buffer);
-            }
+                foreach ($this->child as $value) {
+                    $value->flushBuffer($buffer);
+                }
             if ($restricted) {
                 $this->text = self::restrictText($this->text);
             }
-            $buffer .= $this->text.'</'.$this->name.'>';
+            $buffer .= $this->text . '</' . $this->name . '>';
         }
 
 
@@ -369,17 +378,17 @@ class Tag
     public function flush()
     {
         //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
-        if(isset($this->attribute['data-yukanoe-hidden']))
+        if (isset($this->attribute['data-yukanoe-hidden']))
             return;
 
         $restricted = isset($this->attribute['data-yukanoe-restricted']);
 
         //prepend doctype html
-        if($this->name == 'html')
+        if ($this->name == 'html')
             echo self::$documentType;
 
         //tag name + att
-        echo '<'.$this->name;
+        echo '<' . $this->name;
 
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
@@ -389,20 +398,20 @@ class Tag
                 echo " $key=\"$value\" ";
             }
 
-        if(in_array($this->name, self::$singletonTags)) {
+        if (in_array($this->name, self::$singletonTags)) {
             //Singleton tag -> self closing 
             echo ' />';
         } else {
             //Multipart Tag
             echo '>';
             if (is_array($this->child) || is_object($this->child))
-            foreach ($this->child as $value) {
-                $value->flush();
-            }
+                foreach ($this->child as $value) {
+                    $value->flush();
+                }
             if ($restricted) {
                 $this->text = self::restrictText($this->text);
             }
-            echo $this->text.'</'.$this->name.'>';
+            echo $this->text . '</' . $this->name . '>';
         }
 
     }
@@ -411,17 +420,17 @@ class Tag
     public function flushByResponse(&$response)
     {
         //attribute[data-yukanoe-hidden] == "true" => skip;
-        if(isset($this->attribute['data-yukanoe-hidden']))
+        if (isset($this->attribute['data-yukanoe-hidden']))
             return;
 
         //prepend doctype html
-        if($this->name == 'html')
+        if ($this->name == 'html')
             $response->write(self::$documentType);
-            //echo self::$documentType;
+        //echo self::$documentType;
 
         //tag name + att
         //echo '<'.$this->name;
-        $response->write('<'.$this->name);
+        $response->write('<' . $this->name);
 
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
@@ -429,7 +438,7 @@ class Tag
                 $response->write(" $key=\"$value\" ");
             }
 
-        if(in_array($this->name, self::$singletonTags)) {
+        if (in_array($this->name, self::$singletonTags)) {
             //Singleton tag -> self closing
             //echo ' />';
             $response->write(' />');
@@ -438,10 +447,10 @@ class Tag
             //echo '>';
             $response->write('>');
             if (is_array($this->child) || is_object($this->child))
-            foreach ($this->child as $value) {
-                $value->flushByResponse($response);
-            }
-            $response->write($this->text.'</'.$this->name.'>');
+                foreach ($this->child as $value) {
+                    $value->flushByResponse($response);
+                }
+            $response->write($this->text . '</' . $this->name . '>');
             //echo $this->text.'</'.$this->name.'>';
         }
 
@@ -455,39 +464,39 @@ class Tag
 
     public function trace()
     {
-        self::$traceCounter = self::$traceCounter+1 ?? 0;
-        $GlobalVarName = 'notRootGlobals#'.self::$traceCounter;
-        foreach($GLOBALS as $var_name => $value) {
+        self::$traceCounter = self::$traceCounter + 1 ?? 0;
+        $GlobalVarName = 'notRootGlobals#' . self::$traceCounter;
+        foreach ($GLOBALS as $var_name => $value) {
             if ($value === $this) {
-                $GlobalVarName = '$'.$var_name;
+                $GlobalVarName = '$' . $var_name;
             }
         }
 
         //doctype html
-        if($this->name == 'html')
+        if ($this->name == 'html')
             echo '[!DOCTYPE html]';
         //tag name + att
-        echo "<b> $GlobalVarName </b> = ".'['.$this->name;
+        echo "<b> $GlobalVarName </b> = " . '[' . $this->name;
         if (is_array($this->attribute) || is_object($this->attribute))
             foreach ($this->attribute as $key => $value) {
-                if(in_array($key, ['name', 'id', 'data-yukanoe-hidden'])) 
-                    echo " <b style=\"color:red;\">$key=\"".$value."\"</b>"; //DEV VIEW
+                if (in_array($key, ['name', 'id', 'data-yukanoe-hidden']))
+                    echo " <b style=\"color:red;\">$key=\"" . $value . "\"</b>"; //DEV VIEW
                 else
                     echo " $key=\"$value\" ";
             }
 
-        if(in_array($this->name, self::$singletonTags)){
+        if (in_array($this->name, self::$singletonTags)) {
             //single 
             echo ' /] <br />';
-        }else{
+        } else {
             //double default
             echo '] <br />';
             if (is_array($this->child) || is_object($this->child))
-            foreach ($this->child as $key => $value) {
-                echo "<b>{$GlobalVarName}-></b>child[$key] = ";
-                $value->trace();
-            } 
-            echo $this->text.'[/'.$this->name.']';
+                foreach ($this->child as $key => $value) {
+                    echo "<b>{$GlobalVarName}-></b>child[$key] = ";
+                    $value->trace();
+                }
+            echo $this->text . '[/' . $this->name . ']';
             echo "<br />";
         }
 

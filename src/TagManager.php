@@ -17,7 +17,6 @@ class TagManager
     function __construct()
     {
         $this->IO       = new IO;
-        return $this;
     }
 
     public function read($v_auto)
