@@ -1,12 +1,22 @@
 
 
 # Live Server
+
+- create `live-server.php`
+
 ```php
-// LiveServer.php
-(new \Yukanoe\Tag\LiveServer)->create();
+# LiveServer.php
+require __DIR__ . '/vendor/autoload.php';
+
+use Yukanoe\Tag\LiveServer;
+
+(new LiveServer)->create();
 ```
+
+- run cmd
+
 ```bash
 
-php -S localhost:8080 LiveServer.php
+php -S localhost:8080 live-server.php
 
 ```

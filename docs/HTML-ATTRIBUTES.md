@@ -1,8 +1,8 @@
 # Private HTML Attributes
 
- - What are `data-yukanoe-*` attributes?
+    What are "data-yukanoe-*" attributes?
 
- - `data`: HTML5 custom data attributes prefixed with data-. docs: https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+ - `data`: [HTML5 custom data attributes prefixed with data-.](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
 
  - `yukanoe`: namespace yukanoe
 

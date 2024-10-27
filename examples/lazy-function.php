@@ -1,11 +1,11 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-use \Yukanoe\HTML\Tag;
+use Yukanoe\HTML\Tag;
 
 Tag::$autoFlush = true;
 
-function Tag($name, $attribute, $text)
+function Tag($name, $attribute, $text): Tag
 {
     return new Tag($name, $attribute, $text);
 }
@@ -13,13 +13,13 @@ function Tag($name, $attribute, $text)
 $html = Tag('html', [], '')->addChild([
 
     $head = Tag('head', [], '')->addChild(
-       $title = Tag('title', [], 'Page Title')
+        $title = Tag('title', [], 'Page Title')
     ),
 
-    $body =  Tag('body', [], '')->addChild(
-        $ruby = Tag('div', ['class'=>'ruby'], '')->addChild([
-            $pageTitle   = Tag('h1', [], 'Hello World!'),
-            $pageContent = Tag('p',  [], 'This is a paragraph.')
+    $body = Tag('body', [], '')->addChild(
+        $ruby = Tag('div', ['class' => 'ruby'], '')->addChild([
+            $pageTitle = Tag('h1', [], 'Hello World!'),
+            $pageContent = Tag('p', [], 'This is a paragraph.')
         ])
     )
 

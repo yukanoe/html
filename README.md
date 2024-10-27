@@ -11,104 +11,26 @@ composer require yukanoe/html
 
 ## 2 Table of Contents
 - [Overview](./overview.md)
-- [Quick setup guide](#3-html-php-with-tagmanager)
-- [Tag Basic Usage](#4-tag-usage)
+- [Tag Basic Usage](#get-started)
 - [Test/Demo Directory](./tests)
 - [Examples Directory](./examples)
 - [Class Tag](./docs/CLASS-TAG.md)
 - [Class TagManager](./docs/CLASS-TAG-MANAGER.md)
 - [Private HTML Attributes](./docs/HTML-ATTRIBUTES.md)
 
-...
+## Get started
 
-
-## 3 HTML->PHP with TagManager
-
-**Directory: [/examples/project](./examples/project)**
-
-### 3.1 Directory & File Structure 
-```
-project/
-│   build.php    
-│   index.php      
-│
-└───template-html/
-│   │   index.html
-│   │   ...
-│   
-└───template-php/
-```
-
-### 3.2 Create build tool - build.php
-
-**build.php**
+### Create Tag
 ```php
-require __DIR__.'/vendor/autoload.php';
+use Yukanoe\HTML\Tag;
 
-use \Yukanoe\HTML\TagManager;
-
-$inputDir   = './template-html';
-$outputDir  = './template-php';
-
-$tagManager = new TagManager;
-$tagManager->autoBuild($inputDir, $outputDir); 
-
-```
-### 3.3 Create html files
-
-**project/html/index.html**
-```html
-<html>
-  <head>
-    <title data-yukanoe-id="title">HomePage</title>
-  </head>
-  <body>
-    <div data-yukanoe-id="text">Say a-ny--thin--g--.</div>
-  </body>
-</html>
+$myTag = new Tag(string $name='', array $attribute=[],  string $text='');
 ```
 
-### 3.4 Create php files
-**project/index.php**
+### INPUT (Server: index.php)
 ```php
 <?php
-require __DIR__.'/vendor/autoload.php';
-require __DIR__.'/template-php/index.php';
-
-$username = $_GET['username'] ?? '';
-if($username) {
-    $avn['title']->text = "Hi, {$username}";
-    $avn['text']->text  = "{$username}: Say anything.";
-}
-```
-
-### 3.5 Run build tool & Built-in Web server
-```bash
-cd project/
-composer require yukanoe/html
-php build.php
-php -S localhost:8080 index.php
-```
-## 3.6 Open
-- http://localhost:8080
-- http://localhost:8080/?username=admin
-
-
-## 4 Tag Usage
-
-### Class
-```php
-use \Yukanoe\HTML\Tag;
-```
-
-### Constructor
-```php
-$myTag = new Tag(String $name, Array $attribute,  String $text);
-```
-
-### INPUT (index.php)
-```php
-<?php
+# index.php
 require __DIR__.'/vendor/autoload.php';
 
 use \Yukanoe\HTML\Tag;
@@ -163,23 +85,38 @@ $myTag->setAttribute(['class'=>'card']);
 $myTag->setAttribute('class', 'card');
 $myTag->setText('string 123456789');
 ```
-### hide()/show()
+### hide/show: hide/show a Tag
 ```php
 $myTag->hide();
 $myTag->show();
 ```
 
-## Link method
-
-### addChild() x 3.1415926535897932384626433
+### strict: htmlspecialchars 
 ```php
-$html->addChild($head);
+$myTag->strict();
+```
+
+
+### addChild 
+
+
+```php
+# optional 1: recommended
 $html->addChild([$head, $body]);
+
+# optional 2
 $html->addChild($head, $body);
+
+# optional 3
+$html->addChild($head)->addChild($body);
+
 ```
 
 ### Loops
-**/examples/example-00.php**
+
+[example-00.php](./examples/example-00.php)
+
+- data
 ```php
 $messages = [
     ["name" => "admin", "text" => "bar"],
@@ -188,13 +125,13 @@ $messages = [
     ["name" => "user1", "text" => "foofoofoo"]
 ];
 $body->addChild($center = new Tag('div'));
-foreach ( $messages as $msg ) {
+foreach ($messages as $msg) {
   $center->addChild(new Tag('p', [], "{$msg['name']}: {$msg['text']} "));
 }
 ```
 
-### Clone  ( DEFAULT: deep clone )
-**/examples/example-00.php**
+- Clone  (NOTICE: `Tag` is `deep clone`)
+
 ```php
 $messages = [
     ["name" => "admin", "text" => "bar"],
@@ -216,8 +153,7 @@ foreach ( $messages as $msg) {
 }
 ```
 
-### Conditional Statements
-**/examples/example-00.php**
+- Conditional Statements
 ```php
 $user ??= '';
 if($user == 'admin'){
@@ -227,21 +163,36 @@ if($user == 'admin'){
 ```
 
 ## DOMDocument
-### php 8.3 and below - default character set ISO-8859-1
+
+[HTML5 Support (PHP 8.4)](https://www.zend.com/blog/php-8-4)
+
+- While HTML5 has been around for a very long time now,
+the DOM parser used by the PHP engine has lingered behind,
+only supporting HTML 4.01 features.
+
+- The PHP 8.4 release rectifies that situation with comprehensive support for HTML5,
+via adoption of a more capable HTML5 parsing library,
+and new opt-in DOM classes that exist in a new PHP namespace
+to allow differentiation from the existing XML-oriented DOM classes.
+
+### PHP 8.3 and below - default character set ISO-8859-1
 DOMDocument::loadHTML will treat your string as being in ISO-8859-1 (the HTTP/1.1 default character set) unless you tell it otherwise. This results in UTF-8 strings being interpreted incorrectly.
 
+```html
 - <meta charset="utf-8" />
 - <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 is required
+```
 
-### php 8.4 - DOM HTML5 parsing and serialization
-https://wiki.php.net/rfc/domdocument_html5_parser
-https://wiki.php.net/todo/php84 - Jul 16 2024   Feature freeze
+### PHP 8.4 - DOM HTML5 parsing and serialization
+- https://wiki.php.net/rfc/domdocument_html5_parser
+- https://wiki.php.net/todo/php84 - Jul 16 2024   Feature freeze
 How PHP 8.4 Will Be Improved to Provide Better Support to Parse and Process HTML5 Pages and Files
 
 
 ## Author
 kirishimayuu (kirishimayuu@yukanoe.org)
+
 
 ## License
 Yukanoe\HTML is licensed under the MIT License - see the LICENSE file for details.

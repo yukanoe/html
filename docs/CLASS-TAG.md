@@ -2,31 +2,31 @@
 
 ## Tag 
 
-### Class Attributes:
+### Class Attributes (public):
 ```php
     $name      //'html', 'div', 'a', 'br',..
     $attribute // ['class'=>'ruby', 'href'=>'/index.php']
-    $text:     // 'hello world.'
-    $child:    // [Tag, Tag,..]
-    $parent:   // Tag
+    $text      // 'hello world.'
+    $child     // [Tag, Tag,..]
+    $parent    // Tag
 ```
 ### Class Methods:
-**set/get**
+**setter/getter: Name, Attribute, Text, Parent**
 ```php
 setName(String $name)
 getName()
-//attribute, text, parent
+//...
 ```
 **addChild***
 ```php
-addChild(Tag)
-addChild([Tag, Tag])
-addChild(Tag, Tag)
+addChild(Tag $a)
+addChild(Tag $a, Tag $b)
+addChild([Tag $a, Tag $b])
 ```
-**all**
+**All**
 ```php
-//return $this;
-appendChild($tag) 
+# list return self methods
+appendChild($tag)
 prependChild($tag)
 insertAfter($tag)
 insertBefore($tag)
@@ -39,16 +39,16 @@ show()
 empty()
 destroy()
 
-// Return;
-flush()    //flush current state
-newTrace() //trace child[]
+# list void methods
+flush(): void    //flush current state
+newTrace(): void //trace child[]
 
-// Return OtherTag
-getRoot() : Tag
-getAncestorByName(String $search) : Tag
+# Return OtherTag
+getRoot(): Tag
+getAncestorByName(String $search): Tag
 
-// Return HTML String
-get() : String $html
+# Return HTML String
+get(): string //$html
 
 ```
 

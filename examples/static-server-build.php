@@ -2,7 +2,7 @@
 
 require __DIR__.'/bootstrap.php';
 
-use \Yukanoe\HTML\TagManager;
+use Yukanoe\HTML\TagManager;
 
 $TagManager = new TagManager;
 

@@ -1,32 +1,30 @@
 {
-  "name": "yukanoe/html",
-  "description": "A PHP library - Minimal, Simple and Portable DOM.",
-  "keywords": [
-    "yukanoe",
-    "html",
-    "xhtml",
-    "dom"
-  ],
-  "homepage": "https://github.com/yukanoe/html",
-  "type": "library",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Yukanoe\\HTML\\": "src"
+    "name": "yukanoe/html",
+    "description": "A PHP library - Minimal, Simple and Portable DOM.",
+    "keywords": ["yukanoe", "html", "xhtml", "dom"],
+    "homepage": "https://github.com/yukanoe/html",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Yukanoe\\HTML\\": "src"
+        }
+    },
+
+    "authors": [
+        {
+            "name": "kirishimayuu",
+            "email": "kirishimayuu@yukanoe.org",
+            "homepage": "https://yukanoe.com/kirishimayuu"
+        }
+    ],
+
+    "support": {
+        "email": "contact@yukanoe.org"
+    },
+
+    "require": {
+        "ext-dom": "*",
+        "ext-libxml": "*"
     }
-  },
-  "authors": [
-    {
-      "name": "kirishimayuu",
-      "email": "kirishimayuu@yukanoe.org",
-      "homepage": "https://yukanoe.com/kirishimayuu"
-    }
-  ],
-  "support": {
-    "email": "contact@yukanoe.org"
-  },
-  "require": {
-    "ext-dom": "*",
-    "ext-libxml": "*"
-  }
 }
