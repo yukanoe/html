@@ -16,8 +16,8 @@ class Compiler
     private array $avStatements = [];
     private int $avCounter = 0;
 
-    public $tag;
-    public $tagRoot;
+    public array $tag;
+    public ?Tag $tagRoot;
     public array $tagName = [];
 
     public static string $regVarName = 'av';
@@ -25,17 +25,17 @@ class Compiler
 
     public static string $defaultTagName = 'yukanoe-text';
 
-    public function getTagRoot()
+    public function getTagRoot(): ?Tag
     {
         return $this->tagRoot;
     }
 
-    public function getTagName()
+    public function getTagName(): array
     {
         return $this->tagName;
     }
 
-    public function compileRealTime($domDocument)
+    public function compileRealTime($domDocument): ?Tag
     {
         $this->runBuildTool($domDocument);
         $this->getTagAlias();
@@ -43,19 +43,19 @@ class Compiler
         return $this->getTagRoot();
     }
 
-    public function free()
+    public function free(): void
     {
         $this->avStatements = [];
         $this->avCounter = 0;
     }
 
-    public function fixSingleQuote($v_innerHTML)
+    public function fixSingleQuote(string $v_innerHTML): string
     {
         // Apostrophe
         return str_replace('\'', '\\\'', $v_innerHTML);
     }
 
-    public function checkTagAlias($attribute, $yukanoeid, $id)
+    public function checkTagAlias($attribute, $yukanoeid, $id): void
     {
         //is data-yukanoe-id
         if ($attribute != 'data-yukanoe-id')
@@ -66,7 +66,7 @@ class Compiler
         $this->listAlias[$yukanoeid] = $id;
     }
 
-    public function getTagAlias()
+    public function getTagAlias(): array
     {
         $Result = [];
         $AV = self::$regVarName;
@@ -78,7 +78,7 @@ class Compiler
         return $Result;
     }
 
-    public function runBuildTool($Root, $Leaf = 0)
+    public function runBuildTool($Root, $Leaf = 0): array
     {
         if (!is_object($Root))
             return [];

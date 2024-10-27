@@ -69,7 +69,7 @@ class LiveServer
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     ];
 
-    function getMineTypeByExtension($ext)
+    public function getMineTypeByExtension($ext): string
     {
         $ext = strtolower($ext);
         if (isset($this->mimet[$ext]))
@@ -77,7 +77,7 @@ class LiveServer
         return 'application/octet-stream';
     }
 
-    function getMimeTypeByFileName($filename)
+    public function getMimeTypeByFileName($filename): string
     {
         $FileArrTmp = explode('.', $filename);
         return $this->getMineTypeByExtension(array_pop($FileArrTmp));
@@ -110,7 +110,7 @@ class LiveServer
         if (is_file($htmlFile)) {
             header("Content-type: text/html");
             $tagRoot = (new TagManager)->readRealTime($htmlFile);
-            $tagRoot->flush();
+            $tagRoot?->flush();
             return;
         } // 404
 

@@ -10,35 +10,23 @@ namespace Yukanoe\HTML;
  */
 class Tag
 {
-    public $name = '';
-    public $text = '';
-    public $attribute = [];
-    public $parent = NULL;
-    public $child = [];
-
-    // Alias
-    public $n;
-    public $a;
-    public $t;
-    public $p;
-    public $c;
+    public string $name = '';
+    public string $text = '';
+    public array $attribute = [];
+    public ?Tag $parent = NULL;
+    public array $child = [];
 
     // Configurable
-    public static $autoFlush = true;
-    public static $documentType = '<!DOCTYPE html>';
-    public static $singletonTags = ['img', 'meta', 'input', 'link', 'br', 'source', 'hr', 'area', 'source', 'track'];
+    public static bool  $autoFlush = true;
+    public static string $documentType = '<!DOCTYPE html>';
+    public static array  $singletonTags = ['img', 'meta', 'input', 'link', 'br', 'source', 'hr', 'area', 'source', 'track'];
 
     // Non-configurable
-    public static $singletonAllTags = ['area', 'base', 'basefont', 'bgsound', 'br', 'col', 'command', 'embed', 'frame', 'hr', 'image', 'img', 'input', 'isindex', 'keygen', 'link', 'menuitem', 'meta', 'nextid', 'param', 'source', 'track', 'wbr'];
-    public static $traceCounter = 0;
+    public static array $singletonAllTags = ['area', 'base', 'basefont', 'bgsound', 'br', 'col', 'command', 'embed', 'frame', 'hr', 'image', 'img', 'input', 'isindex', 'keygen', 'link', 'menuitem', 'meta', 'nextid', 'param', 'source', 'track', 'wbr'];
+    public static int $traceCounter = 0;
 
-    public function __construct($name = '', $attribute = [], $text = '')
+    public function __construct(string $name = '', array $attribute = [], string $text = '')
     {
-        $n = &$this->name;
-        $a = &$this->attribute;
-        $t = &$this->text;
-        $p = &$this->parent;
-        $c = &$this->child;
         // init
         $this->name = $name;
         $this->attribute = $attribute;
@@ -89,9 +77,8 @@ class Tag
         return $this;
     }
 
-    public function getAttribute()
+    public function getAttribute(): array
     {
-
         return $this->attribute;
     }
 
@@ -106,27 +93,27 @@ class Tag
         return $this->text;
     }
 
-    public function setParent($v)
+    public function setParent($v): Tag
     {
         $this->parent = $v;
         return $this;
     }
 
-    public function getParent()
+    public function getParent(): ?Tag
     {
         return $this->parent;
     }
 
     //TRUE-SET-MODE:END
 
-    public function appendChild($tag)
+    public function appendChild($tag): Tag
     {
         $tag->setParent($this);
         $this->child[] = $tag;
         return $this;
     }
 
-    public function prependChild($tag)
+    public function prependChild($tag): Tag
     {
         $tag->setParent($this);
         array_unshift($this->child, $tag);
@@ -144,7 +131,7 @@ class Tag
         return $this;
     }
 
-    public function getAncestorByName($search)
+    public function getAncestorByName($search): Tag
     {
         $Find = $this;
         while ($Find->parent) {
@@ -155,7 +142,7 @@ class Tag
         return $this;
     }
 
-    public function getChildsByTagName(string $name = '', array &$tags = [])
+    public function getChildsByTagName(string $name = '', array &$tags = []): Tag
     {
         if (!isset($tags))
             $tags = [];
@@ -170,7 +157,7 @@ class Tag
 
 
     // Add CHILD FUNCTION LIST
-    public function addChild(...$v)
+    public function addChild(...$v): Tag
     {
         //Variable-length argument lists
         foreach ($v as $Element) {
@@ -195,7 +182,7 @@ class Tag
     }
 
     //*Specail
-    public function addChildException($e)
+    public function addChildException($e): void
     {
         echo "<br /> addChild(Tag)";
         echo "<br /> addChild([Tag1, Tag2, Tag3,...])";
@@ -222,7 +209,7 @@ class Tag
     }
 
     // Injection
-    public function insertAfter($tag)
+    public function insertAfter($tag): Tag
     {
         if (!($tag->parent instanceof Tag))
             return $this;
@@ -232,7 +219,7 @@ class Tag
         return $this;
     }
 
-    public function insertBefore($tag)
+    public function insertBefore($tag): Tag
     {
         if (!($tag->parent instanceof Tag))
             return $this;
@@ -243,26 +230,26 @@ class Tag
     }
 
     // Remove child
-    public function removeLastChild()
+    public function removeLastChild(): Tag
     {
         $LastChild = array_pop($this->child);
         return $this;
     }
 
-    public function removeFirstChild()
+    public function removeFirstChild(): Tag
     {
         $FirstChild = array_shift($this->child);
         return $this;
     }
 
-    public function removeChild($tag)
+    public function removeChild($tag): Tag
     {
         if (($offset = array_search($tag, $this->child)) !== false)
             array_splice($this->child, $offset, 1);
         return $this;
     }
 
-    public function removeChildIndex($Index)
+    public function removeChildIndex($Index): Tag
     {
         if (isset($this->child[$Index]))
             $this->removeChild($this->child[$Index]);
@@ -270,20 +257,20 @@ class Tag
     }
 
     //hidden / empty
-    public function hide()
+    public function hide(): Tag
     {
         $this->attribute['data-yukanoe-hidden'] = 'hidden';
         return $this;
     }
 
-    public function show()
+    public function show(): Tag
     {
         if (isset($this->attribute['data-yukanoe-hidden']))
             unset($this->attribute['data-yukanoe-hidden']);
         return $this;
     }
 
-    public function empty()
+    public function empty(): Tag
     {
         $this->name = 'yukanoe-empty';
         $this->attribute = [];
@@ -292,14 +279,14 @@ class Tag
         return $this;
     }
 
-    public function destroy()
+    public function destroy(): Tag
     {
         $this->empty();
         $this->parent->removeChild($this);
         return $this;
     }
 
-    public function get()
+    public function get(): string
     {
         $code_html = '<' . $this->name;
         foreach ($this->attribute as $key => $value) {
@@ -309,7 +296,7 @@ class Tag
         return $code_html;
     }
 
-    public function exportYD(array &$tagName = [])
+    public function exportYD(array &$tagName = []): array
     {
         if (!isset($tagName))
             $tagName = [];
@@ -327,7 +314,7 @@ class Tag
         return htmlspecialchars($str);
     }
 
-    public function flushBuffer(string &$buffer)
+    public function flushBuffer(string &$buffer): void
     {
         $buffer ??= "";
 
@@ -375,7 +362,7 @@ class Tag
     }
 
 
-    public function flush()
+    public function flush(): void
     {
         //attribute[data-yukanoe-hidden] == "true/hidden/.." => skip;
         if (isset($this->attribute['data-yukanoe-hidden']))
@@ -417,7 +404,7 @@ class Tag
     }
 
     // DEVEL
-    public function flushByResponse(&$response)
+    public function flushByResponse(mixed &$response): void
     {
         //attribute[data-yukanoe-hidden] == "true" => skip;
         if (isset($this->attribute['data-yukanoe-hidden']))
@@ -456,13 +443,13 @@ class Tag
 
     }
 
-    public function newTrace()
+    public function newTrace(): void
     {
         self::$traceCounter = 0;
         $this->trace();
     }
 
-    public function trace()
+    public function trace(): void
     {
         self::$traceCounter = self::$traceCounter + 1 ?? 0;
         $GlobalVarName = 'notRootGlobals#' . self::$traceCounter;

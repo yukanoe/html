@@ -9,10 +9,10 @@ class IO
     private int $currentIncludeFile = 0;
     private int $maxIncludeFile = 100;
 
-    public function readHTMLStringFromFile($filepath = 'index.html')
+    public function readHTMLStringFromFile(string $filepath = 'index.html'): string|null
     {
         if (!is_file($filepath))
-            return NULL;
+            return null;
 
         if ($this->currentIncludeFile++ > $this->maxIncludeFile)
             throw new \Exception('Max include files.');
@@ -21,7 +21,7 @@ class IO
 
         $pattern = '/\<\!\-\- *data-yukanoe-include\=\"(.+?\.html)\" *\-\-\>/';
         $subject = $raw;
-        $matches = NULL;
+        $matches = null;
 
         preg_match_all($pattern, $subject, $matches);
 
@@ -54,7 +54,7 @@ class IO
 
     }
 
-    public function readHTMLFile($filepath = 'index.html')
+    public function readHTMLFile(string $filepath = 'index.html'): \DOMNode|\DOMElement|\DOMNameSpaceNode|null
     {
         $this->currentIncludeFile = 0;
         $raw = $this->readHTMLStringFromFile($filepath);
@@ -62,10 +62,10 @@ class IO
     }
 
 
-    public function readHTMLRaw($raw = '')
+    public function readHTMLRaw(string $raw = ''): \DOMElement|\DOMNameSpaceNode|\DOMNode|null
     {
         if (!$raw)
-            return NULL;
+            return null;
         $doc = new \DOMDocument();
         libxml_use_internal_errors(true);
         $doc->loadHTML($raw);
@@ -75,11 +75,11 @@ class IO
     }
 
     public function save(
-        $statements = [],
-        $aliasStatements = [],
-        $fileNamePHP = 'render.php',
-        $namespace = ''
-    )
+        array  $statements = [],
+        array  $aliasStatements = [],
+        string $fileNamePHP = 'render.php',
+        string $namespace = ''
+    ): void
     {
         file_put_contents(
             $fileNamePHP,
@@ -94,7 +94,7 @@ class IO
 
     }
 
-    public function view($cmds = [])
+    public function view(array $cmds = []): void
     {
         if (php_sapi_name() === 'cli')
             $newline = "\n";
@@ -107,11 +107,11 @@ class IO
 
 
     public function toString(
-        $statements = [],
-        $aliasStatements = [],
-        $phpfile = 'render.php',
-        $namespace = ''
-    )
+        array  $statements = [],
+        array  $aliasStatements = [],
+        string $phpfile = 'render.php',
+        string $namespace = ''
+    ): string
     {
 
         $result = '';
