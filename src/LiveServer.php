@@ -69,6 +69,11 @@ class LiveServer
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     ];
 
+    public function __construct()
+    {
+        Tag::$autoFlush = false;
+    }
+
     public function getMineTypeByExtension($ext): string
     {
         $ext = strtolower($ext);

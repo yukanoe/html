@@ -124,7 +124,7 @@ id-yukanoe-html
 
 ```html
 <!doctype html>
-<html data-theme="dark">
+<html data-theme="dark" lang="en">
 <!-- data-yukanoe-include="head.html" -->
 <body>
   <!-- yukanoe-include="body-header.html" -->

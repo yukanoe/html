@@ -12,12 +12,12 @@ use Yukanoe\HTML\Tag;
  */
 class Compiler
 {
-    private array $listAlias = [];
-    private array $avStatements = [];
-    private int $avCounter = 0;
+    public array $listAlias = [];
+    public array $avStatements = [];
+    public int $avCounter = 0;
 
     public array $tag;
-    public ?Tag $tagRoot;
+    public ?Tag $tagRoot = null;
     public array $tagName = [];
 
     public static string $regVarName = 'av';
@@ -49,173 +49,147 @@ class Compiler
         $this->avCounter = 0;
     }
 
-    public function fixSingleQuote(string $v_innerHTML): string
+    public function fixSingleQuote(string $innerHTML): string
     {
-        // Apostrophe
-        return str_replace('\'', '\\\'', $v_innerHTML);
+        // Escape single quotes
+        return str_replace('\'', '\\\'', $innerHTML);
     }
 
-    public function checkTagAlias($attribute, $yukanoeid, $id): void
+    public function checkTagAlias($attribute, $yukanoeId, $id): void
     {
-        //is data-yukanoe-id
-        if ($attribute != 'data-yukanoe-id')
+        // Check if attribute is data-yukanoe-id
+        if ($attribute !== 'data-yukanoe-id') {
             return;
-        //checking yukanoe-id
-        if (!$yukanoeid || strlen($yukanoeid) > 255)
+        }
+        // Validate yukanoe-id
+        if (!$yukanoeId || strlen($yukanoeId) > 255) {
             return;
-        $this->listAlias[$yukanoeid] = $id;
+        }
+        $this->listAlias[$yukanoeId] = $id;
     }
 
     public function getTagAlias(): array
     {
-        $Result = [];
-        $AV = self::$regVarName;
-        $AVN = self::$aliVarName;
+        $result = [];
+        $regVarName = self::$regVarName;
+        $aliVarName = self::$aliVarName;
         foreach ($this->listAlias as $key => $id) {
-            $Result[] = "\${$AVN}['{$key}'] = \${$AV}[{$id}];";
+            $result[] = "\${$aliVarName}['{$key}'] = \${$regVarName}[{$id}];";
             $this->tagName[$key] = $this->tag[$id];
         }
-        return $Result;
+        return $result;
     }
 
-    public function runBuildTool($Root, $Leaf = 0): array
+    public function runBuildTool($rootNode, $parentNodeId = 0): array
     {
-        if (!is_object($Root))
+        if (!is_object($rootNode)) {
             return [];
+        }
 
-        $Logger = new Logger;
-        $YUT_AV = "\$" . self::$regVarName;
+        $logger = new Logger;
+        $regVarName = "\$" . self::$regVarName;
 
-        //handle classic node
-        if ($Root->nodeType == XML_ELEMENT_NODE) {
+        // Handle element nodes
+        if ($rootNode->nodeType === XML_ELEMENT_NODE) {
             $this->avCounter++;
 
-            //START Attribute v2 - won
-            $string_att = "[]";
-            if ($Root->hasAttributes()) {
-                $string_att = "[";
-                foreach ($Root->attributes as $attribute) {
-                    $attribute_name = $this->fixSingleQuote($attribute->name);
-                    $attribute_value = $this->fixSingleQuote($attribute->value);
-                    $string_att .= "'{$attribute_name}'=>'{$attribute_value}',";
+            // Process attributes
+            $attributesString = "[]";
+            if ($rootNode->hasAttributes()) {
+                $attributesString = "[";
+                foreach ($rootNode->attributes as $attribute) {
+                    $attributeName = $this->fixSingleQuote($attribute->name);
+                    $attributeValue = $this->fixSingleQuote($attribute->value);
+                    $attributesString .= "'{$attributeName}'=>'{$attributeValue}',";
                     $this->checkTagAlias($attribute->name, $attribute->value, $this->avCounter);
                 }
-                $string_att .= "]";
-                $string_att = preg_replace('/\,\]$/si', ']', $string_att);
+                $attributesString = rtrim($attributesString, ',') . "]";
             }
 
+            $logger->debug("START Render of {$this->avCounter}");
 
-            $Logger->debug("START Render of {$this->avCounter} ");
-
-            // gen statement
-            $Statement = "{$YUT_AV}[{$this->avCounter}] = new Tag('{$Root->nodeName}', $string_att, '');";
-            // exec statement
-            $arrAttribute = [];
-            if ($Root->hasAttributes()) {
-                foreach ($Root->attributes as $attribute) {
-                    $arrAttribute[$attribute->name] = $attribute->value;
+            // Generate and execute statement
+            $statement = "{$regVarName}[{$this->avCounter}] = new Tag('{$rootNode->nodeName}', $attributesString, '');";
+            $attributesArray = [];
+            if ($rootNode->hasAttributes()) {
+                foreach ($rootNode->attributes as $attribute) {
+                    $attributesArray[$attribute->name] = $attribute->value;
                 }
             }
-            $this->tag[$this->avCounter] = new Tag(
-                $Root->nodeName,
-                $arrAttribute,
-                ''
-            );
+            $this->tag[$this->avCounter] = new Tag($rootNode->nodeName, $attributesArray, '');
 
-            $Logger->info("$Statement");
+            $logger->info($statement);
+            $this->avStatements[] = $statement;
 
-            $this->avStatements[] = $Statement;
-
-            if ($Leaf) {
-                $Logger->debug("AddLink");
-                $Statement = "{$YUT_AV}[{$Leaf}]->addChild({$YUT_AV}[{$this->avCounter}]);";
-                $this->tag[$Leaf]->addChild($this->tag[$this->avCounter]);
-                $Logger->info("$Statement");
-                $this->avStatements[] = $Statement;
+            if ($parentNodeId) {
+                $logger->debug("AddLink");
+                $statement = "{$regVarName}[{$parentNodeId}]->addChild({$regVarName}[{$this->avCounter}]);";
+                $this->tag[$parentNodeId]->addChild($this->tag[$this->avCounter]);
+                $logger->info($statement);
+                $this->avStatements[] = $statement;
             }
 
-            if ($Root->hasChildNodes()) {
-                $rparent = $this->avCounter;  //temp
-                $children = $Root->childNodes;
-                $numchild = $children->length;
+            if ($rootNode->hasChildNodes()) {
+                $currentParentId = $this->avCounter;
+                $childNodes = $rootNode->childNodes;
+                $numChildNodes = $childNodes->length;
 
-                // child = 1 && isTextNode => inner = child->inner
-                if ($numchild == 1 &&
-                    ($children->item(0)->nodeType == XML_TEXT_NODE ||
-                        $children->item(0)->nodeType == XML_CDATA_SECTION_NODE)) {
+                // Handle single text node child
+                if ($numChildNodes == 1 && ($childNodes->item(0)->nodeType == XML_TEXT_NODE || $childNodes->item(0)->nodeType == XML_CDATA_SECTION_NODE)) {
+                    $textContent = $childNodes->item(0)->nodeValue;
+                    $textContent = $this->fixSingleQuote($textContent);
 
-                    $Text = $children->item(0)->nodeValue;
-                    $Text = $this->fixSingleQuote($Text);
+                    $statement = "{$regVarName}[{$this->avCounter}]->text = '$textContent';";
+                    $this->tag[$this->avCounter]->text = $textContent;
 
-                    //echo "<br />IGOTIT@1";
-                    // gen statemtnt
-                    $Statement = "{$YUT_AV}[{$this->avCounter}]->text = '$Text';";
-                    // exec statement
-                    $this->tag[$this->avCounter]->text = $Text;
-
-                    $Logger->info("$Statement");
-                    $this->avStatements[] = $Statement;
-
+                    $logger->info($statement);
+                    $this->avStatements[] = $statement;
                 } else {
-                    $i = 0;
-                    while ($i < $children->length) {
-                        $Logger->debug("BEGIN reading Child $i of {$this->avCounter}");
-                        $child = $this->runBuildTool($children->item($i), $rparent);
-                        $Logger->debug("END   reading Child $i of {$this->avCounter}");
-                        $i++;
+                    for ($i = 0; $i < $childNodes->length; $i++) {
+                        $logger->debug("BEGIN reading Child $i of {$this->avCounter}");
+                        $this->runBuildTool($childNodes->item($i), $currentParentId);
+                        $logger->debug("END reading Child $i of {$this->avCounter}");
                     }
                 }
             }
 
-
-            //handle text node
-        } elseif ($Root->nodeType == XML_TEXT_NODE
-            || $Root->nodeType == XML_CDATA_SECTION_NODE) {
-
-
-            $value = trim($Root->nodeValue);
-            $PValue = $Root->nodeValue;
-            //$tagName = $Root->nodeName;
+        // Handle text and CDATA nodes
+        } elseif ($rootNode->nodeType == XML_TEXT_NODE || $rootNode->nodeType == XML_CDATA_SECTION_NODE) {
+            $nodeValue = trim($rootNode->nodeValue);
+            $rawNodeValue = $rootNode->nodeValue;
             $tagName = self::$defaultTagName;
 
-            if ($value) {
-
+            if ($nodeValue) {
                 $this->avCounter++;
 
-                $Statement = "{$YUT_AV}[{$this->avCounter}] = new Tag('{$tagName}', [], '');";
+                $statement = "{$regVarName}[{$this->avCounter}] = new Tag('{$tagName}', [], '');";
                 $this->tag[$this->avCounter] = new Tag($tagName, [], '');
 
-                $Logger->info("$Statement");
-                $this->avStatements[] = $Statement;
+                $logger->info($statement);
+                $this->avStatements[] = $statement;
 
-                $Logger->debug("SET XML_TEXT_NODE = " . $PValue);
+                $logger->debug("SET XML_TEXT_NODE = " . $rawNodeValue);
 
-                $PValue = $this->fixSingleQuote($PValue);
-                $Statement = "{$YUT_AV}[{$this->avCounter}]->text = '$PValue';";
-                $this->tag[$this->avCounter]->text = $Root->nodeValue;
+                $escapedNodeValue = $this->fixSingleQuote($rawNodeValue);
+                $statement = "{$regVarName}[{$this->avCounter}]->text = '$escapedNodeValue';";
+                $this->tag[$this->avCounter]->text = $rawNodeValue;
 
-                $Logger->info("$Statement");
-                $this->avStatements[] = $Statement;
+                $logger->info($statement);
+                $this->avStatements[] = $statement;
 
-                if ($Leaf) {
-                    $Logger->debug("AddLink");
-                    $Statement = "{$YUT_AV}[{$Leaf}]->addChild({$YUT_AV}[{$this->avCounter}]);";
-                    $this->tag[$Leaf]->addChild($this->tag[$this->avCounter]);
+                if ($parentNodeId) {
+                    $logger->debug("AddLink");
+                    $statement = "{$regVarName}[{$parentNodeId}]->addChild({$regVarName}[{$this->avCounter}]);";
+                    $this->tag[$parentNodeId]->addChild($this->tag[$this->avCounter]);
 
-                    $Logger->info("$Statement");
-                    $this->avStatements[] = $Statement;
+                    $logger->info($statement);
+                    $this->avStatements[] = $statement;
                 }
-
             } else {
-                $Logger->debug("XML_TEXT_NODE == NULL : ByPass");
+                $logger->debug("XML_TEXT_NODE == NULL : ByPass");
             }
-
         }
 
-
         return $this->avStatements;
-
     }
-
-
 }
