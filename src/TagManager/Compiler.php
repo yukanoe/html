@@ -1,15 +1,22 @@
 <?php
 
+/**
+ * Yukanoe HTML Compiler
+ * Convert HTML DOMDocument to Yukanoe Tag
+ * Details:
+ *   Plan:
+ *   - $this->tagRoot    : ROOT Tag[x]
+ *   - $this->tagName[?] : Alias data-yukanoe-id=? [x]
+ *   - $this->tagId[?]   : Alias id=? []
+ */
+
 namespace Yukanoe\HTML\TagManager;
 
+use DOMElement;
+use DOMNameSpaceNode;
+use DOMNode;
 use Yukanoe\HTML\Tag;
 
-/**
- *   plan:
- *   $this->tagRoot    : ROOT Tag[x]
- *   $this->tagName[?] : Alias data-yukanoe-id=? [x]
- *   $this->tagId[?]   : Alias id=? []
- */
 class Compiler
 {
     public array $listAlias = [];
@@ -35,7 +42,7 @@ class Compiler
         return $this->tagName;
     }
 
-    public function compileRealTime($domDocument): ?Tag
+    public function compileRealTime(DOMElement|DOMNameSpaceNode|DOMNode|null $domDocument): ?Tag
     {
         $this->runBuildTool($domDocument);
         $this->getTagAlias();
@@ -55,7 +62,7 @@ class Compiler
         return str_replace('\'', '\\\'', $innerHTML);
     }
 
-    public function checkTagAlias($attribute, $yukanoeId, $id): void
+    public function checkTagAlias(string $attribute, string $yukanoeId, int $id): void
     {
         // Check if attribute is data-yukanoe-id
         if ($attribute !== 'data-yukanoe-id') {
@@ -80,7 +87,7 @@ class Compiler
         return $result;
     }
 
-    public function runBuildTool($rootNode, $parentNodeId = 0): array
+    public function runBuildTool(DOMElement|DOMNameSpaceNode|DOMNode|null $rootNode, int $parentNodeId = 0): array
     {
         if (!is_object($rootNode)) {
             return [];

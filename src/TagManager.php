@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Yukanoe - PHP HTML Tag Manager
+ * @package Yukanoe\HTML\TagManager
+ * @version 1.0.0
+ * @link https://github.com/yukanoe/html
+ * @license MIT
+ */
+
 namespace Yukanoe\HTML;
 
 use DOMElement;
@@ -11,7 +19,7 @@ use Yukanoe\HTML\TagManager\IO;
 
 class TagManager
 {
-    private  DOMElement|DOMNameSpaceNode|DOMNode|null $domDocument;
+    private DOMElement|DOMNameSpaceNode|DOMNode|null $domDocument;
     private array $mainArr;
     private array $aliasArr;
     private IO $IO;

@@ -1,9 +1,13 @@
 <?php
 
-namespace Yukanoe\HTML\TagManager;
 /**
- *
+ * IO:
+ * Read and Convert HTML to PHP DOMObject
+ * Save PHP DOMObject to PHP File
  */
+
+namespace Yukanoe\HTML\TagManager;
+
 class IO
 {
     private int $currentIncludeFile = 0;

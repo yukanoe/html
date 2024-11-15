@@ -1,17 +1,15 @@
 <?php
 
-namespace Yukanoe\HTML\TagManager;
 /**
- *
- * DEBUG-ONLY
- *
+ * Minimal logger for debugging purposes.
  */
+
+namespace Yukanoe\HTML\TagManager;
+
 class Logger
 {
-
-    public static $mode = 'none'; // "none",   "debug",   "info"
-    public static $newline = "\n";   // "\n",     "<br />"
-
+    public static string $mode = 'none'; // "none",   "debug",   "info"
+    public static string $newline = "\n";   // "\n",     "<br />"
 
     public function info($text): void
     {
@@ -24,6 +22,5 @@ class Logger
         if (self::$mode == 'debug')
             echo "\n[DEBUG] $text" . self::$newline;
     }
-
 
 }

@@ -1,11 +1,16 @@
 <?php
 
+/**
+ * Yukanoe - PHP HTML Tag
+ * Represents an HTML tag with attributes, text content, and child tags.
+ * @package Yukanoe\HTML\Tag
+ * @version 1.0.0
+ * @link https://github.com/yukanoe/html
+ * @license MIT
+ */
+
 namespace Yukanoe\HTML;
 
-/**
- * Class Tag
- * Represents an HTML tag with attributes, text content, and child tags.
- */
 class Tag
 {
     public string $name = '';

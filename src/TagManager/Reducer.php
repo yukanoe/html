@@ -1,6 +1,5 @@
 <?php
 
-namespace Yukanoe\HTML\TagManager;
 /**
  * rewrite:
  * {
@@ -12,12 +11,13 @@ namespace Yukanoe\HTML\TagManager;
  *     $YT_AV[10] = new \tag('div', ['class'=>'card'], 'UwU');
  * }
  *
- *
  */
+
+namespace Yukanoe\HTML\TagManager;
+
 class Reducer
 {
-
-    public function reduce($InputStatements): array
+    public function reduce(array $InputStatements): array
     {
         $regVarName = Compiler::$regVarName;
         $logger = new Logger;
@@ -61,5 +61,4 @@ class Reducer
 
         return $baseStatements;
     }
-
 }

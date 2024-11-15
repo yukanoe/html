@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * LiveServer - A simple PHP live server
+ * usage: php -S <host>:<port> LiveServer.php
+ *
+ * run: php -S localhost:8000 LiveServer.php
+ */
+
 namespace Yukanoe\HTML;
 
 class LiveServer
