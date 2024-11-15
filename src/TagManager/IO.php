@@ -58,7 +58,7 @@ class IO
     {
         $this->currentIncludeFile = 0;
         $raw = $this->readHTMLStringFromFile($filepath);
-        return $this->readHTMLRaw($raw);
+        return $this->readHTMLRaw($raw ?? '');
     }
 
 

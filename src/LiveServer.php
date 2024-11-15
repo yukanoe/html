@@ -5,7 +5,7 @@ namespace Yukanoe\HTML;
 class LiveServer
 {
     private string $dir = ".";
-    private $mimet = [
+    private array $mimet = [
         'txt' => 'text/plain',
         'htm' => 'text/html',
         'html' => 'text/html',
@@ -30,13 +30,6 @@ class LiveServer
         'svg' => 'image/svg+xml',
         'svgz' => 'image/svg+xml',
 
-        // archives
-        'zip' => 'application/zip',
-        'rar' => 'application/x-rar-compressed',
-        'exe' => 'application/x-msdownload',
-        'msi' => 'application/x-msdownload',
-        'cab' => 'application/vnd.ms-cab-compressed',
-
         // audio/video
         'wav' => 'audio/wave',
         'flac' => 'audio/flac',
@@ -45,28 +38,8 @@ class LiveServer
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
         'mp4' => 'video/mp4',
-        'webm' => 'video/webm',
+        'webm' => 'video/webm'
 
-        // adobe
-        'pdf' => 'application/pdf',
-        'psd' => 'image/vnd.adobe.photoshop',
-        'ai' => 'application/postscript',
-        'eps' => 'application/postscript',
-        'ps' => 'application/postscript',
-
-        // ms office
-        'doc' => 'application/msword',
-        'rtf' => 'application/rtf',
-        'xls' => 'application/vnd.ms-excel',
-        'ppt' => 'application/vnd.ms-powerpoint',
-        'docx' => 'application/msword',
-        'xlsx' => 'application/vnd.ms-excel',
-        'pptx' => 'application/vnd.ms-powerpoint',
-
-
-        // open office
-        'odt' => 'application/vnd.oasis.opendocument.text',
-        'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     ];
 
     public function __construct()
@@ -113,22 +86,30 @@ class LiveServer
             $htmlFile = "{$htmlFile}.html";
         //find html
         if (is_file($htmlFile)) {
-            header("Content-type: text/html");
+            $this->setHeader("Content-type: text/html");
             $tagRoot = (new TagManager)->readRealTime($htmlFile);
             $tagRoot?->flush();
             return;
         } // 404
 
         if (!is_file($file)) {
-            header("Content-type: text/html");
+            $this->setHeader("Content-type: text/html");
             echo("404 Error, Page Not Found {$file}");
             return;
         }
 
         $type = $this->getMimeTypeByFileName($file);
-        header("Content-type: {$type}");
+        $this->setHeader("Content-type: {$type}");
         echo file_get_contents($file);
 
+    }
+
+    public function setHeader(string $header): LiveServer
+    {
+        if (PHP_SAPI !== 'cli') {
+            header($header);
+        }
+        return $this;
     }
 
 }

@@ -1,6 +1,7 @@
 .idea/
 
 coverage/
+tests/output/
 .phpunit.result.cache
 
 vendor/
@@ -8,4 +9,3 @@ composer.phar
 composer.lock
 
 examples/TemplatePHP/
-
